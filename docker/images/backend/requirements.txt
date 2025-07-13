@@ -16,3 +16,7 @@ python-multipart         # nécessaire à FastAPI pour File / Form
 torch                    # framework de deep learning
 transformers             # bibliothèque pour les modèles de langage
 accelerate               # accélération des modèles Transformers
+
+pathlib                 # manipulation de chemins de fichiers
+uuid                    # génération d'UUIDs
+datetime                # manipulation de dates et heures

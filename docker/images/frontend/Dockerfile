@@ -5,7 +5,7 @@ WORKDIR /app
 # 3. Install dependencies (cached for rebuilds)
 COPY docker/images/frontend/package*.json ./
 COPY docker/images/frontend/tsconfig.json ./
-RUN npm ci
+RUN npm install
 # 3. Code source Next.js
 COPY docker/images/frontend/ ./
 # 5. Build the Next.js app

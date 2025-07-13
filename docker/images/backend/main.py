@@ -8,8 +8,13 @@ from contextlib import asynccontextmanager
 from functools import lru_cache
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from transformers import pipeline, logging as hf_logging # type: ignore
+
+from pathlib import Path
+from uuid import uuid4
+from datetime import datetime
 
 # ───── Logger ─────────────────────────────────────────────────────────
 logging.basicConfig(level=logging.INFO)
@@ -21,9 +26,31 @@ hf_logging.set_verbosity_error()
 # ───── Pydantic DTO ───────────────────────────────────────────────────
 class AskIn(BaseModel):
     question: str = Field(..., min_length=3)
-
+    conv_id: str | None = None  # ID de conversation, None pour le 1er tour
 class AskOut(BaseModel):
+    conv_id: str                      # renvoyé au front
     answer: str
+
+# --------------------------------------------------------
+
+# dossier où l’on écrit les journaux (créé au boot)
+LOG_DIR = Path("/app/volume/conversations")
+LOG_DIR.mkdir(parents=True, exist_ok=True)
+
+def _append_log(conv_id: str, header_dt: str, role: str, text: str) -> None:
+    """
+    Ajoute une ligne au fichier de conversation.  
+    Crée le fichier + un en-tête daté si c’est le premier appel.
+    """
+    file = LOG_DIR / f"conv-{conv_id}_{header_dt}.txt"
+
+    is_new = not file.exists()
+    with file.open("a", encoding="utf-8") as f:
+        if is_new:
+            f.write(f"# Conversation {conv_id} – démarrée le {header_dt}\n\n")
+        ts = datetime.utcnow().isoformat(timespec="seconds") + "Z"
+        f.write(f"[{ts}] {role.upper()}: {text}\n")
+
 
 # ───── Hugging Face pipeline (lazy‑load + cache) ─────────────────────
 @lru_cache(maxsize=1)
@@ -98,6 +125,15 @@ async def lifespan(app: FastAPI):
 # ───── FastAPI app ────────────────────────────────────────────────────
 app = FastAPI(title="TW3 Chat Backend", lifespan=lifespan)
 
+# ───── Middleware ────────────────────────────────────────────────────
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],              # ↳ restreins à ["http://localhost:3000"] si tu préfères
+    allow_credentials=False,
+    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_headers=["*"],
+)
+
 # ───── Endpoints ──────────────────────────────────────────────────────
 @app.get("/", tags=["Health"])
 def root() -> Dict[str, str]:
@@ -111,20 +147,29 @@ def root() -> Dict[str, str]:
 
 @app.post("/ask", response_model=AskOut, tags=["Chat"])
 async def ask_handler(payload: AskIn) -> AskOut:
-    """Retourne la réponse générée localement par Qwen.
+    """Endpoint pour poser une question et obtenir une réponse.
     Args:
-        payload (AskIn): Contient la question à poser.
+        payload (AskIn): Contient la question et l'ID de conversation.
     Returns:
-        AskOut: Contient la réponse générée par le modèle.
+        AskOut: Contient l'ID de conversation et la réponse générée.
     """
-    logger.info(f"Received question: {payload.question}")
-    question = payload.question.strip()
+    conv_id = payload.conv_id or str(uuid4())
+    header_dt = datetime.utcnow().strftime("%Y-%m-%dT%H%M%S")
 
-    # Exécution bloquante déportée dans un thread pour ne pas bloquer l'event‑loop
+    question = payload.question.strip()
+    logger.info("Generating answer for conv %s – q='%s…'", conv_id, question[:60])
+
+    # 1) log la QUESTION
+    _append_log(conv_id, header_dt, "user", question)
+
+    # 2) génération (inchangé)
     loop = asyncio.get_running_loop()
     answer = await loop.run_in_executor(
         None,
-        lambda: generate_answer(question, max_new_tokens=256, temperature=0.7)
+        lambda: generate_answer(question, max_new_tokens=256, temperature=0.7),
     )
 
-    return AskOut(answer=answer)
+    # 3) log la RÉPONSE
+    _append_log(conv_id, header_dt, "bot", answer)
+
+    return AskOut(conv_id=conv_id, answer=answer)

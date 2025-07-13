@@ -70,7 +70,7 @@ const Chat: React.FC<ChatProps> = ({ messages, user, onSend }) => {
 
       {/* ---------- zone de saisie ---------- */}
       <footer className="mt-auto flexJIC items-center w-full gap-2 px-2 pb-4">
-        <textarea ref={inputRef} value={text} placeholder="Votre message..." onChange={e => setText(e.target.value)} onKeyDown={handleKey} rows={2} className="bg-white w-11/12 resize-none px-8 pt-4 h-20 mb-1 max-h-28 m-0 text-left min-w-auto border rounded-4xl"/>
+        <textarea id="chat-input" ref={inputRef} value={text} placeholder="Votre message..." onChange={e => setText(e.target.value)} onKeyDown={handleKey} rows={2} className="bg-white w-11/12 resize-none px-8 pt-4 h-20 mb-1 max-h-28 m-0 text-left min-w-auto border rounded-4xl"/>
         <button onClick={handleSend} className="flex h-full w-12 items-center justify-center rounded-full border-2 bg-[color:var(--tw3blue)] text-xl cursor-pointer hover:bg-white"aria-label="Envoyer">
           🕊️
         </button>

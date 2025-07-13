@@ -25,23 +25,15 @@ const ChatMessage: React.FC<Props> = ({ message, currentUid }) => {
 
   /* ---------- classes Tailwind dynamiques ---------- */
   const base   = `flex items-center gap-1 w-full text-white ${isMine ? 'justify-end' : ''}`;
-  const bubble = `max-w-full break-words rounded-3xl px-3 py-3 leading-6
-                  ${isMine ? 'modalChatColor-sent' : 'modalChatColor-received'}`;
-  const avatar = `flex h-12 w-12 items-center justify-center rounded-full
-                  ${isMine ? 'modalChatColor-sent' : 'modalChatColor-received'}`;
+  const bubble = `max-w-full break-words rounded-3xl px-3 py-3 leading-6 ${isMine ? 'modalChatColor-sent' : 'modalChatColor-received'}`;
+  const avatar = `flex h-12 w-12 items-center justify-center rounded-full ${isMine ? 'modalChatColor-sent' : 'modalChatColor-received'}`;
 
   return (
-    <div
-      className={base}
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
-    >
+    <div className={base} onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
       {!isMine && <p className={avatar}>{trigram}</p>}
-
       <span className={bubble}>
         {hover ? `Date : ${dateText}` : message.message}
       </span>
-
       {isMine && <p className={avatar}>{trigram}</p>}
     </div>
   );
