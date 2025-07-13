@@ -1,0 +1,40 @@
+services:
+  backend:
+   image: tw3_backend:1.0
+   container_name: backend_container
+   env_file:
+     - ../.env
+   networks:
+     - internal_network
+     - external_network
+   ports:
+     - "8000:8000"
+   volumes:
+     - tw3_data_volume:/app/volume
+
+  frontend:
+    image: tw3_frontend:1.0
+    container_name: frontend_container
+    depends_on:
+      - backend
+    env_file:
+      - ../.env
+    environment:
+      - NODE_ENV=production
+    ports:
+      - "3000:3000"
+    networks:
+      - internal_network
+      - external_network
+    volumes:
+      - tw3_data_volume:/app/volume
+
+networks:
+  internal_network:
+    driver: bridge
+  external_network:
+    driver: bridge
+
+volumes:
+  tw3_data_volume:
+    external: true

@@ -18,15 +18,9 @@ NETWORK_NAME="tw3_network"
 VOLUME_NAME="tw3_data_volume"
 LOG_DIR="logs"
 DOCKER_IMAGES=(
-  "backend:1.0:docker/images/backend/Dockerfile"
-  "frontend:1.0:docker/images/frontend/Dockerfile"
+  "tw3_backend:1.0:docker/images/backend/Dockerfile"
+  "tw3_frontend:1.0:docker/images/frontend/Dockerfile"
 )
-
-# Ensure SOURCE_DIR is defined as an environment variable
-if [[ -z "$SOURCE_DIR" ]]; then
-  echo "Error: SOURCE_DIR environment variable is not set. Exiting..."
-  exit 1
-fi
 
 # Function to check if a Docker network exists
 check_network_exists() {

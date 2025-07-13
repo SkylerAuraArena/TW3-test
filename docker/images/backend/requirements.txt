@@ -1,0 +1,18 @@
+# ------------------- Web framework -------------------
+fastapi                  # API principale (inclut Starlette)
+uvicorn                  # serveur ASGI de prod / dev
+
+# ------------------- Réseau / HTTP -------------------
+httpx                    # client HTTP async utilisé dans le code
+
+# ------------------- Validation & configuration ------ 
+pydantic                 # modèles de données
+python-dotenv            # chargement des variables d'env (.env)
+
+# ------------------- Uploads (multipart) -------------
+python-multipart         # nécessaire à FastAPI pour File / Form
+
+# ------------------- model -------------------------
+torch                    # framework de deep learning
+transformers             # bibliothèque pour les modèles de langage
+accelerate               # accélération des modèles Transformers

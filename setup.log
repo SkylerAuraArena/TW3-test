@@ -1,0 +1,154 @@
+Checking for Docker network 'tw3_network'...
+Docker network 'tw3_network' already exists.
+Checking for Docker volume 'tw3_data_volume'...
+Docker volume 'tw3_data_volume' already exists.
+Building Docker images if necessary...
+Building Docker image 'tw3_backend:1.0'...
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 1.10kB done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/python:3.13-slim
+#2 ...
+
+#3 [auth] library/python:pull token for registry-1.docker.io
+#3 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/python:3.13-slim
+#2 DONE 1.2s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 2B done
+#4 DONE 0.0s
+
+#5 [1/7] FROM docker.io/library/python:3.13-slim@sha256:6544e0e002b40ae0f59bc3618b07c1e48064c4faed3a15ae2fbd2e8f663e8283
+#5 DONE 0.0s
+
+#6 [internal] load build context
+#6 transferring context: 8.32kB done
+#6 DONE 0.0s
+
+#7 [5/7] COPY docker/images/backend /app/
+#7 CACHED
+
+#8 [2/7] WORKDIR /app
+#8 CACHED
+
+#9 [4/7] RUN pip install --no-cache-dir -r requirements.txt
+#9 CACHED
+
+#10 [3/7] COPY docker/images/backend/requirements.txt .
+#10 CACHED
+
+#11 [6/7] COPY docker/images/backend/main.py .
+#11 CACHED
+
+#12 [7/7] RUN chmod +x start.sh
+#12 CACHED
+
+#13 exporting to image
+#13 exporting layers done
+#13 writing image sha256:573f9f7188f12d652a8b6d7ab612d7e5bc8898d7789b6e802b391d54b92ad95a done
+#13 naming to docker.io/library/tw3_backend:1.0 done
+#13 DONE 0.0s
+
+View build details: docker-desktop://dashboard/build/desktop-linux/desktop-linux/p0t8ihhf7e2c9gpn89jp99bh5
+Docker image 'tw3_backend:1.0' built successfully.
+Building Docker image 'tw3_frontend:1.0'...
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 917B done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/node:24-alpine
+#2 DONE 0.4s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [builder 1/7] FROM docker.io/library/node:24-alpine@sha256:22b3c1a1171c798c0429f36272922dbb356bbab8a6d11b3b095a143d3321262a
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 24.23MB 0.2s done
+#5 DONE 0.2s
+
+#6 [builder 2/7] WORKDIR /app
+#6 CACHED
+
+#7 [runner 3/7] COPY --from=builder /app/public ./public
+#7 CACHED
+
+#8 [builder 3/7] COPY docker/images/frontend/package*.json ./
+#8 CACHED
+
+#9 [builder 4/7] COPY docker/images/frontend/tsconfig.json ./
+#9 CACHED
+
+#10 [builder 7/7] RUN npm run build
+#10 CACHED
+
+#11 [runner 4/7] COPY --from=builder /app/.next ./.next
+#11 CACHED
+
+#12 [runner 5/7] COPY --from=builder /app/node_modules ./node_modules
+#12 CACHED
+
+#13 [runner 6/7] COPY --from=builder /app/package.json ./package.json
+#13 CACHED
+
+#14 [builder 6/7] COPY docker/images/frontend/ ./
+#14 CACHED
+
+#15 [builder 5/7] RUN npm ci
+#15 CACHED
+
+#16 [runner 7/7] COPY --from=builder /app/next.config.ts ./next.config.ts
+#16 CACHED
+
+#17 exporting to image
+#17 exporting layers done
+#17 writing image sha256:114c0a96f10f054744d9d670412a8ba6664556bbf7cf24657ec7db097b18aa13 done
+#17 naming to docker.io/library/tw3_frontend:1.0 done
+#17 DONE 0.0s
+
+View build details: docker-desktop://dashboard/build/desktop-linux/desktop-linux/1a4j3ifpaccrhyomnc8rh8j3y
+Docker image 'tw3_frontend:1.0' built successfully.
+Starting Docker Compose...
+ Network docker_external_network  Creating
+ Network docker_external_network  Created
+ Network docker_internal_network  Creating
+ Network docker_internal_network  Created
+ Container backend_container  Creating
+ Container backend_container  Created
+ Container frontend_container  Creating
+ Container frontend_container  Created
+Attaching to backend_container, frontend_container
+frontend_container  | 
+frontend_container  | > tw3@0.1.0 start
+frontend_container  | > next start
+frontend_container  | 
+frontend_container  |    ▲ Next.js 15.3.5
+frontend_container  |    - Local:        http://localhost:3000
+frontend_container  |    - Network:      http://172.20.0.3:3000
+frontend_container  | 
+frontend_container  |  ✓ Starting...
+frontend_container  |  ✓ Ready in 298ms
+backend_container   | Démarrage de l'application FastAPI backend...
+backend_container   | INFO:     Started server process [9]
+backend_container   | INFO:     Waiting for application startup.
+backend_container   | INFO:tw3.chat:Preloading Qwen pipeline for faster responses…
+backend_container   | INFO:tw3.chat:Loading Qwen pipeline… (first call only)
+backend_container   | Fetching 4 files:   0%|          | 0/4 [00:00<?, ?it/s]Fetching 4 files:  25%|██▌       | 1/4 [01:42<05:08, 102.81s/it]Fetching 4 files:  50%|█████     | 2/4 [01:43<01:24, 42.47s/it] Fetching 4 files: 100%|██████████| 4/4 [01:43<00:00, 25.76s/it]
+backend_container   | Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 2/4 [00:00<00:00, 19.89it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 28.95it/s]
+backend_container   | WARNING:accelerate.big_modeling:Some parameters are on the meta device because they were offloaded to the disk and cpu.
+backend_container   | INFO:     Application startup complete.
+backend_container   | INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+backend_container   | INFO:     192.168.65.1:47845 - "GET /docs HTTP/1.1" 200 OK
+backend_container   | INFO:     192.168.65.1:47845 - "GET /openapi.json HTTP/1.1" 200 OK
+backend_container   | INFO:tw3.chat:Health check endpoint called
+backend_container   | INFO:     192.168.65.1:47845 - "GET / HTTP/1.1" 200 OK

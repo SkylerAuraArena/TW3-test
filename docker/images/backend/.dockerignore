@@ -1,0 +1,24 @@
+# Ignorer les fichiers de l'environnement virtuel Python
+.venv/
+env/
+venv/
+
+# Ignorer les fichiers de configuration d'éditeurs de texte ou d'IDE
+.vscode/
+.idea/
+
+# Ignorer les fichiers de log et cache
+*.log
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignorer les fichiers de configuration sensibles
+.env
+
+node_modules
+.next            # ou dist/ pour Vite
+.dockerignore
+Dockerfile
+.git
