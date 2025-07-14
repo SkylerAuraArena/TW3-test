@@ -1,9 +1,11 @@
 # ------------------- Web framework -------------------
 fastapi                  # API principale (inclut Starlette)
 uvicorn                  # serveur ASGI de prod / dev
+python-dotenv            # chargement des variables d'environnement
 
 # ------------------- Réseau / HTTP -------------------
 httpx                    # client HTTP async utilisé dans le code
+google-serp-api          # API pour interroger Google Search
 
 # ------------------- Validation & configuration ------ 
 pydantic                 # modèles de données

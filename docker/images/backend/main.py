@@ -6,15 +6,17 @@ import asyncio
 from typing import Dict
 from contextlib import asynccontextmanager
 from functools import lru_cache
+from pathlib import Path
+from uuid import uuid4
+from datetime import datetime
 
+import httpx      
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from transformers import pipeline, logging as hf_logging # type: ignore
 
-from pathlib import Path
-from uuid import uuid4
-from datetime import datetime
+from search_tools import search_web
 
 # ───── Logger ─────────────────────────────────────────────────────────
 logging.basicConfig(level=logging.INFO)
@@ -41,6 +43,15 @@ def _append_log(conv_id: str, header_dt: str, role: str, text: str) -> None:
     """
     Ajoute une ligne au fichier de conversation.  
     Crée le fichier + un en-tête daté si c’est le premier appel.
+    Args:
+        conv_id (str): ID de la conversation.
+        header_dt (str): Date/heure pour l'en-tête du fichier.
+        role (str): Rôle de l'auteur du message ('user' ou 'bot').
+        text (str): Le texte du message à enregistrer.
+    Returns:
+        None
+    Raises:
+        OSError: Si le fichier ne peut pas être écrit.
     """
     file = LOG_DIR / f"conv-{conv_id}_{header_dt}.txt"
 
@@ -68,23 +79,21 @@ def get_pipe():
         trust_remote_code=True    # nécessaire pour Qwen
     )
 
-def generate_answer(question: str,
-                    max_new_tokens: int = 128,
-                    temperature: float = 0.2) -> str:
-    """Génère une réponse à *question* via le modèle Qwen.
-    Gère les deux formats de sortie possibles :
-    1. `generated_text` est une **str**  – cas habituel.
-    2. `generated_text` est une **liste de messages** (dict) – certains templates récents renvoient toute la conversation.
+def generate_answer(prompt: str,
+                    max_new_tokens: int = 256,
+                    temperature: float = 0.7) -> str:
+    """Appelle le modèle et récupère la réponse texte.
     Args:
-        question (str): La question à laquelle répondre.
+        prompt (str): La question ou le prompt à envoyer au modèle.
         max_new_tokens (int): Nombre maximum de tokens à générer.
-        temperature (float): Contrôle la créativité de la réponse.
+        temperature (float): Contrôle la créativité de la génération.
     Returns:
         str: La réponse générée par le modèle.
+    Raises:
+        Exception: Si le modèle ne peut pas être appelé ou si la réponse est invalide.
     """
-    logger.info(f"Generating answer for question: {question}")
     pipe = get_pipe()
-    messages = [{"role": "user", "content": question}]
+    messages = [{"role": "user", "content": prompt}]
     out = pipe(
         messages,
         max_new_tokens=max_new_tokens,
@@ -93,20 +102,20 @@ def generate_answer(question: str,
     )
     data = out[0]["generated_text"]
 
-    # Format 1 : chaîne de caractères directe
+    # Format 1 : Qwen renvoie directement une str
     if isinstance(data, str):
         return data.strip()
 
-    # Format 2 : liste de messages (dict)
+    # Format 2 : liste de messages
     if isinstance(data, list):
-        # On cherche le dernier message de rôle 'assistant'
         for msg in reversed(data):
             if isinstance(msg, dict) and msg.get("role") == "assistant":
                 return str(msg.get("content", "")).strip()
-        # Fallback : tout convertir en texte
-        return " ".join(str(m.get("content", "")) if isinstance(m, dict) else str(m) for m in data).strip()
+        return " ".join(
+            str(m.get("content", "")) if isinstance(m, dict) else str(m)
+            for m in data
+        ).strip()
 
-    # Inattendu : on cast en str
     logger.warning("Unexpected generated_text type: %s", type(data))
     return str(data).strip()
 
@@ -144,32 +153,52 @@ def root() -> Dict[str, str]:
     logger.info("Health check endpoint called")
     return {"data": "Bienvenue sur l'API TW3 Chat 🎉"}
 
-
 @app.post("/ask", response_model=AskOut, tags=["Chat"])
 async def ask_handler(payload: AskIn) -> AskOut:
-    """Endpoint pour poser une question et obtenir une réponse.
+    """
+    • Recherche Web asynchrone (SerpAPI)  
+    • Injection du contexte dans le prompt  
+    • Génération Qwen dans un thread séparé
     Args:
         payload (AskIn): Contient la question et l'ID de conversation.
     Returns:
         AskOut: Contient l'ID de conversation et la réponse générée.
+    Raises:
+        Exception: Si la génération échoue ou si le contexte Web est indisponible.
     """
     conv_id = payload.conv_id or str(uuid4())
     header_dt = datetime.utcnow().strftime("%Y-%m-%dT%H%M%S")
 
     question = payload.question.strip()
-    logger.info("Generating answer for conv %s – q='%s…'", conv_id, question[:60])
+    logger.info("Conv %s – question : %s…", conv_id, question[:60])
 
-    # 1) log la QUESTION
+    # 1) log QUESTION
     _append_log(conv_id, header_dt, "user", question)
 
-    # 2) génération (inchangé)
-    loop = asyncio.get_running_loop()
-    answer = await loop.run_in_executor(
-        None,
-        lambda: generate_answer(question, max_new_tokens=256, temperature=0.7),
-    )
+    # 2) contexte Web (ne bloque pas l'event-loop CPU)
+    web_ctx = await search_web(question)
+    if web_ctx:
+        logger.info("Web context found (%d chars)", len(web_ctx))
+        prompt = (
+            f"Question de l'utilisateur :\n{question}\n\n"
+            f"Contexte Web (pistes externes, peut être incomplet) :\n"
+            f"{web_ctx}\n\n"
+            "Réponds en t'appuyant sur ce contexte quand il est pertinent, "
+            "et paraphrase les informations. Si le contexte est hors-sujet, "
+            "ignore-le simplement."
+        )
+    else:
+        prompt = question
 
-    # 3) log la RÉPONSE
+    # 3) génération – on décale dans un pool thread pour ne pas bloquer l'IO
+    loop = asyncio.get_running_loop()
+    # answer = await loop.run_in_executor(
+    #     None,
+    #     lambda: generate_answer(prompt)
+    # )
+    answer = prompt  # Simule la génération pour l'exemple
+
+    # 4) log RÉPONSE
     _append_log(conv_id, header_dt, "bot", answer)
 
     return AskOut(conv_id=conv_id, answer=answer)
