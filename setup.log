@@ -10,11 +10,14 @@ Building Docker image 'tw3_backend:1.0'...
 #1 transferring dockerfile: 1.10kB done
 #1 DONE 0.0s
 
-#2 [auth] library/python:pull token for registry-1.docker.io
-#2 DONE 0.0s
+#2 [internal] load metadata for docker.io/library/python:3.13-slim
+#2 ...
 
-#3 [internal] load metadata for docker.io/library/python:3.13-slim
-#3 DONE 0.9s
+#3 [auth] library/python:pull token for registry-1.docker.io
+#3 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/python:3.13-slim
+#2 DONE 1.5s
 
 #4 [internal] load .dockerignore
 #4 transferring context: 2B done
@@ -24,13 +27,13 @@ Building Docker image 'tw3_backend:1.0'...
 #5 DONE 0.0s
 
 #6 [internal] load build context
-#6 transferring context: 15.85kB 0.0s done
+#6 transferring context: 17.57kB 0.0s done
 #6 DONE 0.0s
 
-#7 [2/7] WORKDIR /app
+#7 [3/7] COPY docker/images/backend/requirements.txt .
 #7 CACHED
 
-#8 [3/7] COPY docker/images/backend/requirements.txt .
+#8 [2/7] WORKDIR /app
 #8 CACHED
 
 #9 [4/7] RUN pip install --no-cache-dir -r requirements.txt
@@ -40,18 +43,18 @@ Building Docker image 'tw3_backend:1.0'...
 #10 DONE 0.0s
 
 #11 [6/7] COPY docker/images/backend/main.py .
-#11 DONE 0.1s
+#11 DONE 0.0s
 
 #12 [7/7] RUN chmod +x start.sh
 #12 DONE 0.2s
 
 #13 exporting to image
 #13 exporting layers 0.0s done
-#13 writing image sha256:c97ce274391eb18660772a579bbeb8b3bf9835d6f07e24f4c776d26b48a048e5 done
+#13 writing image sha256:0a53babb2a1b878aeace69ed8768a664bfa749fd5c302a9fd28420216a0c5fb0 done
 #13 naming to docker.io/library/tw3_backend:1.0 done
 #13 DONE 0.0s
 
-View build details: docker-desktop://dashboard/build/desktop-linux/desktop-linux/sxix8kqsrkrhk7ddiu4zlqke0
+View build details: docker-desktop://dashboard/build/desktop-linux/desktop-linux/xct4rphfevsx999dn195t2bi5
 Docker image 'tw3_backend:1.0' built successfully.
 Building Docker image 'tw3_frontend:1.0'...
 #0 building with "desktop-linux" instance using docker driver
@@ -60,11 +63,14 @@ Building Docker image 'tw3_frontend:1.0'...
 #1 transferring dockerfile: 922B done
 #1 DONE 0.0s
 
-#2 [auth] library/node:pull token for registry-1.docker.io
-#2 DONE 0.0s
+#2 [internal] load metadata for docker.io/library/node:24-alpine
+#2 ...
 
-#3 [internal] load metadata for docker.io/library/node:24-alpine
-#3 DONE 0.8s
+#3 [auth] library/node:pull token for registry-1.docker.io
+#3 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/node:24-alpine
+#2 DONE 0.9s
 
 #4 [internal] load .dockerignore
 #4 transferring context: 2B done
@@ -77,34 +83,34 @@ Building Docker image 'tw3_frontend:1.0'...
 #6 transferring context: 24.24MB 0.3s done
 #6 DONE 0.3s
 
-#7 [builder 7/7] RUN npm run build
+#7 [builder 2/7] WORKDIR /app
 #7 CACHED
 
-#8 [builder 4/7] COPY docker/images/frontend/tsconfig.json ./
+#8 [runner 6/7] COPY --from=builder /app/package.json ./package.json
 #8 CACHED
 
-#9 [runner 6/7] COPY --from=builder /app/package.json ./package.json
+#9 [runner 4/7] COPY --from=builder /app/.next ./.next
 #9 CACHED
 
-#10 [runner 3/7] COPY --from=builder /app/public ./public
+#10 [builder 3/7] COPY docker/images/frontend/package*.json ./
 #10 CACHED
 
-#11 [runner 4/7] COPY --from=builder /app/.next ./.next
+#11 [builder 6/7] COPY docker/images/frontend/ ./
 #11 CACHED
 
-#12 [runner 5/7] COPY --from=builder /app/node_modules ./node_modules
+#12 [builder 7/7] RUN npm run build
 #12 CACHED
 
-#13 [builder 2/7] WORKDIR /app
+#13 [runner 5/7] COPY --from=builder /app/node_modules ./node_modules
 #13 CACHED
 
-#14 [builder 5/7] RUN npm install
+#14 [builder 4/7] COPY docker/images/frontend/tsconfig.json ./
 #14 CACHED
 
-#15 [builder 6/7] COPY docker/images/frontend/ ./
+#15 [builder 5/7] RUN npm install
 #15 CACHED
 
-#16 [builder 3/7] COPY docker/images/frontend/package*.json ./
+#16 [runner 3/7] COPY --from=builder /app/public ./public
 #16 CACHED
 
 #17 [runner 7/7] COPY --from=builder /app/next.config.ts ./next.config.ts
@@ -116,7 +122,7 @@ Building Docker image 'tw3_frontend:1.0'...
 #18 naming to docker.io/library/tw3_frontend:1.0 done
 #18 DONE 0.0s
 
-View build details: docker-desktop://dashboard/build/desktop-linux/desktop-linux/ihu3pzh6x9t1m6sswopqhqqpd
+View build details: docker-desktop://dashboard/build/desktop-linux/desktop-linux/psioe5mnw7tfr3p0owvgv2k7l
 Docker image 'tw3_frontend:1.0' built successfully.
 Starting Docker Compose...
  Network docker_external_network  Creating
@@ -137,22 +143,22 @@ frontend_container  |    - Local:        http://localhost:3000
 frontend_container  |    - Network:      http://172.21.0.3:3000
 frontend_container  | 
 frontend_container  |  ✓ Starting...
-frontend_container  |  ✓ Ready in 490ms
+frontend_container  |  ✓ Ready in 491ms
 backend_container   | Démarrage de l'application FastAPI backend...
 backend_container   | INFO:     Started server process [9]
 backend_container   | INFO:     Waiting for application startup.
 backend_container   | INFO:tw3.chat:Preloading Qwen pipeline for faster responses…
 backend_container   | INFO:tw3.chat:Loading Qwen pipeline… (first call only)
-backend_container   | Fetching 4 files:   0%|          | 0/4 [00:00<?, ?it/s]Fetching 4 files:  25%|██▌       | 1/4 [01:34<04:42, 94.30s/it]Fetching 4 files: 100%|██████████| 4/4 [01:34<00:00, 23.58s/it]
-backend_container   | Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 41.02it/s]
-backend_container   | WARNING:accelerate.big_modeling:Some parameters are on the meta device because they were offloaded to the disk and cpu.
+backend_container   | Fetching 4 files:   0%|          | 0/4 [00:00<?, ?it/s]Fetching 4 files:  25%|██▌       | 1/4 [01:39<04:58, 99.44s/it]Fetching 4 files: 100%|██████████| 4/4 [01:39<00:00, 24.86s/it]
+backend_container   | Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 40.66it/s]
+backend_container   | WARNING:accelerate.big_modeling:Some parameters are on the meta device because they were offloaded to the cpu and disk.
 backend_container   | INFO:     Application startup complete.
 backend_container   | INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
-backend_container   | INFO:     192.168.65.1:26248 - "OPTIONS /ask HTTP/1.1" 200 OK
-backend_container   | INFO:tw3.chat:Conv 85d91e67-8d7b-4e57-831b-3b3bc10b458b – question : Quels sont les derniers développements en IA générative annoncés cette semaine? Donne-moi 3 exemples concrets avec leurs sources.…
-backend_container   | INFO:root:NewsAPI response: {'status': 'ok', 'totalResults': 0, 'articles': []}
-backend_container   | INFO:tw3.chat:Conv 85d91e67-8d7b-4e57-831b-3b3bc10b458b – found 0 news articles
-backend_container   | INFO:tw3.chat:Conv 85d91e67-8d7b-4e57-831b-3b3bc10b458b – prompt : Tu vas répondre à une question en utilisant uniquement tes connaissances internes.
+backend_container   | INFO:     192.168.65.1:51713 - "OPTIONS /ask HTTP/1.1" 200 OK
+backend_container   | INFO:tw3.chat:Conv 4be6a2f9-8aa7-4b5b-8b32-9484a84bf654 – question : Quels sont les derniers développements en IA générative annoncés cette semaine? Donne-
+backend_container   | moi 3 exemples concrets avec leurs sources.…
+backend_container   | INFO:tw3.chat:Conv 4be6a2f9-8aa7-4b5b-8b32-9484a84bf654 – found 0 news articles
+backend_container   | INFO:tw3.chat:Conv 4be6a2f9-8aa7-4b5b-8b32-9484a84bf654 – prompt : Tu vas répondre à une question en utilisant uniquement tes connaissances internes.
 backend_container   | 
 backend_container   | INSTRUCTIONS :
 backend_container   | - Réponds de manière factuelle et précise.
@@ -162,9 +168,16 @@ backend_container   | - Si la question porte sur des actualités récentes ou de
 backend_container   | - Si la question porte sur des actualités récentes, termine ta réponse comme ceci :
 backend_container   | 'Pour obtenir des informations actualisées, veuillez poser votre question sous forme de mots-clés simples comme "IA générative", "technologie", "cinéma".'
 backend_container   | 
-backend_container   | - **IMPORTANT : Termine toujours ta réponse en conseillant à l'utilisateur de reformuler sa question avec des mots-clés simples comme 'IA générative', 'technologie', 'cinéma' pour obtenir des informations d'actualité précises.**
+backend_container   | - **IMPORTANT : Termine toujours ta réponse en conseillant à l'utilisateur de reformuler sa question en français avec des mots-clés simples comme 'IA générative', 'technologie', 'cinéma' pour obtenir des informations d'actualité précises.**
 backend_container   | 
-backend_container   | Question : Quels sont les derniers développements en IA générative annoncés cette semaine? Donne-moi 3 exemples concrets avec leurs sources.
+backend_container   | Question : Quels sont les derniers développements en IA générative annoncés cette semaine? Donne-
+backend_container   | moi 3 exemples concrets avec leurs sources.
 backend_container   | 
 backend_container   | Réponse :
-backend_container   | INFO:     192.168.65.1:26248 - "POST /ask HTTP/1.1" 200 OK
+backend_container   | INFO:     192.168.65.1:51713 - "POST /ask HTTP/1.1" 200 OK
+Gracefully stopping... (press Ctrl+C again to force)
+ Container frontend_container  Stopping
+ Container frontend_container  Stopped
+ Container backend_container  Stopping
+ Container backend_container  Stopped
+canceled
