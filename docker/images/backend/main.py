@@ -203,13 +203,18 @@ async def ask_handler(payload: AskIn) -> AskOut:
         )
     else:
         prompt = (
-            "Réponds à la question suivante en t’appuyant sur tes connaissances propres. N’invente jamais de sources, de liens, de dates ou de citations.\n"
-            "Commence par identifier le thème principal de la question (par exemple : “les derniers développements en IA générative”) et donne une réponse basée uniquement sur tes connaissances internes.\n"
-            "Précise alors que tu t’appuies sur tes connaissances générales, sans inventer ni supposer d’actualité précise ou de sources.\n"
-            "Dans ce cas, indique aussi à l’utilisateur que pour obtenir des informations récentes, il est préférable de poser sa question sous la forme de mots-clés simples correspondant à un thème, comme “IA générative”, “cinéma”, “technologie”, etc., plutôt que sous forme de question complexe ou d’exemple.\n\n"
+            "Tu vas répondre à une question en utilisant uniquement tes connaissances internes.\n\n"
+            "INSTRUCTIONS :\n"
+            "- Réponds de manière factuelle et précise.\n"
+            "- N'invente jamais de sources, de liens, de dates ou de citations.\n"
+            "- Indique clairement que tu t'appuies sur tes connaissances générales, sans accès à l'actualité.\n"
+            "- Si la question porte sur des actualités récentes ou des développements très récents, indique que tu ne peux pas fournir de sources d'actualité ou d'exemples récents précis.\n"
+            "- Si la question porte sur des actualités récentes, termine ta réponse comme ceci :\n"
+            "'Pour obtenir des informations actualisées, veuillez poser votre question sous forme de mots-clés simples comme \"IA générative\", \"technologie\", \"cinéma\".'\n\n"
+            "- **IMPORTANT : Termine toujours ta réponse en conseillant à l'utilisateur de reformuler sa question en français avec des mots-clés simples comme 'IA générative', 'technologie', 'cinéma' pour obtenir des informations d'actualité précises.**\n\n"
             f"Question : {question}\n\n"
             "Réponse :"
-        ).replace("{question}", question)
+        )
 
     logger.info("Conv %s – prompt : %s", conv_id, prompt)
     _append_log(conv_id, header_dt, "prompt", prompt)

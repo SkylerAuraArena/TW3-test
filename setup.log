@@ -10,45 +10,48 @@ Building Docker image 'tw3_backend:1.0'...
 #1 transferring dockerfile: 1.10kB done
 #1 DONE 0.0s
 
-#2 [internal] load metadata for docker.io/library/python:3.13-slim
-#2 DONE 0.5s
+#2 [auth] library/python:pull token for registry-1.docker.io
+#2 DONE 0.0s
 
-#3 [internal] load .dockerignore
-#3 transferring context: 2B done
-#3 DONE 0.0s
+#3 [internal] load metadata for docker.io/library/python:3.13-slim
+#3 DONE 0.9s
 
-#4 [1/7] FROM docker.io/library/python:3.13-slim@sha256:6544e0e002b40ae0f59bc3618b07c1e48064c4faed3a15ae2fbd2e8f663e8283
+#4 [internal] load .dockerignore
+#4 transferring context: 2B done
 #4 DONE 0.0s
 
-#5 [internal] load build context
-#5 transferring context: 15.66kB 0.0s done
+#5 [1/7] FROM docker.io/library/python:3.13-slim@sha256:6544e0e002b40ae0f59bc3618b07c1e48064c4faed3a15ae2fbd2e8f663e8283
 #5 DONE 0.0s
 
-#6 [2/7] WORKDIR /app
-#6 CACHED
+#6 [internal] load build context
+#6 transferring context: 15.85kB 0.0s done
+#6 DONE 0.0s
 
-#7 [3/7] COPY docker/images/backend/requirements.txt .
+#7 [2/7] WORKDIR /app
 #7 CACHED
 
-#8 [4/7] RUN pip install --no-cache-dir -r requirements.txt
+#8 [3/7] COPY docker/images/backend/requirements.txt .
 #8 CACHED
 
-#9 [5/7] COPY docker/images/backend /app/
-#9 DONE 0.0s
+#9 [4/7] RUN pip install --no-cache-dir -r requirements.txt
+#9 CACHED
 
-#10 [6/7] COPY docker/images/backend/main.py .
+#10 [5/7] COPY docker/images/backend /app/
 #10 DONE 0.0s
 
-#11 [7/7] RUN chmod +x start.sh
+#11 [6/7] COPY docker/images/backend/main.py .
 #11 DONE 0.1s
 
-#12 exporting to image
-#12 exporting layers 0.0s done
-#12 writing image sha256:fc354566c0b860fc80e8011436bacab175efea5110efa68c7a9093692b82854f done
-#12 naming to docker.io/library/tw3_backend:1.0 done
-#12 DONE 0.0s
+#12 [7/7] RUN chmod +x start.sh
+#12 DONE 0.2s
 
-View build details: docker-desktop://dashboard/build/desktop-linux/desktop-linux/aw9gbr24xtop5wva94cdibhie
+#13 exporting to image
+#13 exporting layers 0.0s done
+#13 writing image sha256:c97ce274391eb18660772a579bbeb8b3bf9835d6f07e24f4c776d26b48a048e5 done
+#13 naming to docker.io/library/tw3_backend:1.0 done
+#13 DONE 0.0s
+
+View build details: docker-desktop://dashboard/build/desktop-linux/desktop-linux/sxix8kqsrkrhk7ddiu4zlqke0
 Docker image 'tw3_backend:1.0' built successfully.
 Building Docker image 'tw3_frontend:1.0'...
 #0 building with "desktop-linux" instance using docker driver
@@ -57,66 +60,69 @@ Building Docker image 'tw3_frontend:1.0'...
 #1 transferring dockerfile: 922B done
 #1 DONE 0.0s
 
-#2 [internal] load metadata for docker.io/library/node:24-alpine
-#2 DONE 0.4s
+#2 [auth] library/node:pull token for registry-1.docker.io
+#2 DONE 0.0s
 
-#3 [internal] load .dockerignore
-#3 transferring context: 2B done
-#3 DONE 0.0s
+#3 [internal] load metadata for docker.io/library/node:24-alpine
+#3 DONE 0.8s
 
-#4 [builder 1/7] FROM docker.io/library/node:24-alpine@sha256:22b3c1a1171c798c0429f36272922dbb356bbab8a6d11b3b095a143d3321262a
+#4 [internal] load .dockerignore
+#4 transferring context: 2B done
 #4 DONE 0.0s
 
-#5 [internal] load build context
-#5 transferring context: 24.24MB 0.3s done
-#5 DONE 0.3s
+#5 [builder 1/7] FROM docker.io/library/node:24-alpine@sha256:22b3c1a1171c798c0429f36272922dbb356bbab8a6d11b3b095a143d3321262a
+#5 DONE 0.0s
 
-#6 [runner 3/7] COPY --from=builder /app/public ./public
-#6 CACHED
+#6 [internal] load build context
+#6 transferring context: 24.24MB 0.3s done
+#6 DONE 0.3s
 
-#7 [builder 6/7] COPY docker/images/frontend/ ./
+#7 [builder 7/7] RUN npm run build
 #7 CACHED
 
-#8 [builder 5/7] RUN npm install
+#8 [builder 4/7] COPY docker/images/frontend/tsconfig.json ./
 #8 CACHED
 
-#9 [runner 5/7] COPY --from=builder /app/node_modules ./node_modules
+#9 [runner 6/7] COPY --from=builder /app/package.json ./package.json
 #9 CACHED
 
-#10 [builder 7/7] RUN npm run build
+#10 [runner 3/7] COPY --from=builder /app/public ./public
 #10 CACHED
 
-#11 [builder 3/7] COPY docker/images/frontend/package*.json ./
+#11 [runner 4/7] COPY --from=builder /app/.next ./.next
 #11 CACHED
 
-#12 [builder 4/7] COPY docker/images/frontend/tsconfig.json ./
+#12 [runner 5/7] COPY --from=builder /app/node_modules ./node_modules
 #12 CACHED
 
-#13 [runner 4/7] COPY --from=builder /app/.next ./.next
+#13 [builder 2/7] WORKDIR /app
 #13 CACHED
 
-#14 [runner 6/7] COPY --from=builder /app/package.json ./package.json
+#14 [builder 5/7] RUN npm install
 #14 CACHED
 
-#15 [builder 2/7] WORKDIR /app
+#15 [builder 6/7] COPY docker/images/frontend/ ./
 #15 CACHED
 
-#16 [runner 7/7] COPY --from=builder /app/next.config.ts ./next.config.ts
+#16 [builder 3/7] COPY docker/images/frontend/package*.json ./
 #16 CACHED
 
-#17 exporting to image
-#17 exporting layers done
-#17 writing image sha256:28541e448f112dd0f14c323ded8658757e53ad8b4def996f8396cca84c07056d done
-#17 naming to docker.io/library/tw3_frontend:1.0 done
-#17 DONE 0.0s
+#17 [runner 7/7] COPY --from=builder /app/next.config.ts ./next.config.ts
+#17 CACHED
 
-View build details: docker-desktop://dashboard/build/desktop-linux/desktop-linux/kcmo7qrmeuf2h4zu8vnahbwx1
+#18 exporting to image
+#18 exporting layers done
+#18 writing image sha256:28541e448f112dd0f14c323ded8658757e53ad8b4def996f8396cca84c07056d done
+#18 naming to docker.io/library/tw3_frontend:1.0 done
+#18 DONE 0.0s
+
+View build details: docker-desktop://dashboard/build/desktop-linux/desktop-linux/ihu3pzh6x9t1m6sswopqhqqpd
 Docker image 'tw3_frontend:1.0' built successfully.
 Starting Docker Compose...
- Network docker_internal_network  Creating
- Network docker_internal_network  Created
  Network docker_external_network  Creating
  Network docker_external_network  Created
+ Network docker_internal_network  Creating
+ Network docker_internal_network  Created
  Container backend_container  Creating
  Container backend_container  Created
  Container frontend_container  Creating
@@ -131,26 +137,34 @@ frontend_container  |    - Local:        http://localhost:3000
 frontend_container  |    - Network:      http://172.21.0.3:3000
 frontend_container  | 
 frontend_container  |  ✓ Starting...
-frontend_container  |  ✓ Ready in 310ms
+frontend_container  |  ✓ Ready in 490ms
 backend_container   | Démarrage de l'application FastAPI backend...
 backend_container   | INFO:     Started server process [9]
 backend_container   | INFO:     Waiting for application startup.
 backend_container   | INFO:tw3.chat:Preloading Qwen pipeline for faster responses…
 backend_container   | INFO:tw3.chat:Loading Qwen pipeline… (first call only)
-backend_container   | Fetching 4 files:   0%|          | 0/4 [00:00<?, ?it/s]Fetching 4 files:  25%|██▌       | 1/4 [01:37<04:51, 97.28s/it]Fetching 4 files: 100%|██████████| 4/4 [01:37<00:00, 24.32s/it]
-backend_container   | Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:00<00:00, 26.10it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 34.75it/s]
-backend_container   | WARNING:accelerate.big_modeling:Some parameters are on the meta device because they were offloaded to the cpu and disk.
+backend_container   | Fetching 4 files:   0%|          | 0/4 [00:00<?, ?it/s]Fetching 4 files:  25%|██▌       | 1/4 [01:34<04:42, 94.30s/it]Fetching 4 files: 100%|██████████| 4/4 [01:34<00:00, 23.58s/it]
+backend_container   | Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 41.02it/s]
+backend_container   | WARNING:accelerate.big_modeling:Some parameters are on the meta device because they were offloaded to the disk and cpu.
 backend_container   | INFO:     Application startup complete.
 backend_container   | INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
-backend_container   | INFO:tw3.chat:Conv 5f133be8-1efa-4994-982f-e14c4f48920c – question : Quels sont les derniers développements en IA générative annoncés cette semaine? Donne-moi 3 exemples concrets avec leurs sources.…
+backend_container   | INFO:     192.168.65.1:26248 - "OPTIONS /ask HTTP/1.1" 200 OK
+backend_container   | INFO:tw3.chat:Conv 85d91e67-8d7b-4e57-831b-3b3bc10b458b – question : Quels sont les derniers développements en IA générative annoncés cette semaine? Donne-moi 3 exemples concrets avec leurs sources.…
 backend_container   | INFO:root:NewsAPI response: {'status': 'ok', 'totalResults': 0, 'articles': []}
-backend_container   | INFO:tw3.chat:Conv 5f133be8-1efa-4994-982f-e14c4f48920c – found 0 news articles
-backend_container   | INFO:tw3.chat:Conv 5f133be8-1efa-4994-982f-e14c4f48920c – prompt : Réponds à la question suivante en t’appuyant sur tes connaissances propres. N’invente jamais de sources, de liens, de dates ou de citations.
-backend_container   | Commence par identifier le thème principal de la question (par exemple : “les derniers développements en IA générative”) et donne une réponse basée uniquement sur tes connaissances internes.
-backend_container   | Précise alors que tu t’appuies sur tes connaissances générales, sans inventer ni supposer d’actualité précise ou de sources.
-backend_container   | Dans ce cas, indique aussi à l’utilisateur que pour obtenir des informations récentes, il est préférable de poser sa question sous la forme de mots-clés simples correspondant à un thème, comme “IA générative”, “cinéma”, “technologie”, etc., plutôt que sous forme de question complexe ou d’exemple.
+backend_container   | INFO:tw3.chat:Conv 85d91e67-8d7b-4e57-831b-3b3bc10b458b – found 0 news articles
+backend_container   | INFO:tw3.chat:Conv 85d91e67-8d7b-4e57-831b-3b3bc10b458b – prompt : Tu vas répondre à une question en utilisant uniquement tes connaissances internes.
+backend_container   | 
+backend_container   | INSTRUCTIONS :
+backend_container   | - Réponds de manière factuelle et précise.
+backend_container   | - N'invente jamais de sources, de liens, de dates ou de citations.
+backend_container   | - Indique clairement que tu t'appuies sur tes connaissances générales, sans accès à l'actualité.
+backend_container   | - Si la question porte sur des actualités récentes ou des développements très récents, indique que tu ne peux pas fournir de sources d'actualité ou d'exemples récents précis.
+backend_container   | - Si la question porte sur des actualités récentes, termine ta réponse comme ceci :
+backend_container   | 'Pour obtenir des informations actualisées, veuillez poser votre question sous forme de mots-clés simples comme "IA générative", "technologie", "cinéma".'
+backend_container   | 
+backend_container   | - **IMPORTANT : Termine toujours ta réponse en conseillant à l'utilisateur de reformuler sa question avec des mots-clés simples comme 'IA générative', 'technologie', 'cinéma' pour obtenir des informations d'actualité précises.**
 backend_container   | 
 backend_container   | Question : Quels sont les derniers développements en IA générative annoncés cette semaine? Donne-moi 3 exemples concrets avec leurs sources.
 backend_container   | 
 backend_container   | Réponse :
-backend_container   | INFO:     192.168.65.1:18066 - "POST /ask HTTP/1.1" 200 OK
+backend_container   | INFO:     192.168.65.1:26248 - "POST /ask HTTP/1.1" 200 OK
