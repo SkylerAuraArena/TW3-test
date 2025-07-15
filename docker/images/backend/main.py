@@ -2,7 +2,6 @@ from __future__ import annotations
 """TW3 Chat Backend – FastAPI + Qwen 7B"""
 
 import logging
-import asyncio
 from typing import Dict
 from contextlib import asynccontextmanager
 from functools import lru_cache
@@ -15,7 +14,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from transformers import pipeline, logging as hf_logging  # type: ignore
 
-from search_tools import search_news_async
+import os
+from dotenv import load_dotenv
+import requests
+import asyncio
 
 # ───── Logger ─────────────────────────────────────────────────────────
 logging.basicConfig(level=logging.INFO)
@@ -34,6 +36,29 @@ class AskOut(BaseModel):
     answer: str
 
 # --------------------------------------------------------
+load_dotenv()
+API_KEY = os.getenv("NEWSAPI_KEY")
+if not API_KEY:
+    raise ValueError("NEWSAPI_KEY manquante.")
+
+def format_news_context(query="Generative AI", from_date="2025-07-01", sort="relevancy", max_results=5):
+    url = (f'https://newsapi.org/v2/everything?'
+           f'q={query}&'
+           f'from={from_date}&'
+           f'sortBy={sort}&'
+           f'pageSize={max_results}&'
+           f'language=fr&'
+           f'apiKey={API_KEY}')
+    resp = requests.get(url)
+    data = resp.json()
+    logging.info(f"NewsAPI response: {data}")
+    if data.get("status") != "ok" or "articles" not in data:
+        return ""
+    # On extrait un résumé formaté pour chaque article
+    return "\n".join(
+        f"- {art['title']} ({art.get('source', {}).get('name','')}, {art['publishedAt'][:10]}) — {art.get('description','')}\n  {art['url']}"
+        for art in data["articles"][:max_results]
+    )
 
 # dossier où l’on écrit les journaux (créé au boot)
 LOG_DIR = Path("/app/volume/conversations")
@@ -153,30 +178,43 @@ async def ask_handler(payload: AskIn) -> AskOut:
     logger.info("Conv %s – question : %s…", conv_id, question)
     _append_log(conv_id, header_dt, "user", question)
 
-    # 1) Recherche d’actualités asynchrone (search_news_async)
-    from_date = (now - timedelta(days=7)).strftime("%Y-%m-%d")
-    news_ctx = await search_news_async(question, from_date, "relevancy", max_results=5)
-    logger.info("Conv %s – found %d news articles", conv_id, news_ctx.count("- "))
+    # Recherche d’actualités
+    from_date = (now - timedelta(days=30)).strftime("%Y-%m-%d")
+    sort = "relevancy"
+    max_results = 5
+    news_ctx = format_news_context(
+        query=question,
+        from_date=from_date,
+        sort=sort,
+        max_results=max_results
+    )
+    logger.info("Conv %s – found %d news articles", conv_id, news_ctx.count("- ") if news_ctx else 0)
     _append_log(conv_id, header_dt, "news", news_ctx or "Aucune information d’actualité trouvée.")
 
-    # 2) Prompt directif pour forcer l’usage du contexte news
     if news_ctx:
         prompt = (
-            f"Réponds à la question suivante uniquement à partir des articles d’actualité ci-dessous."
-            f"N’invente rien, ne donne pas d’explications générales."
-            f"Ne commence jamais par une excuse de type ‘en tant qu’IA, je n’ai pas accès au web’."
-            f"Si aucune information des articles ne permet de répondre, écris : « Aucune information d’actualité pertinente trouvée dans les articles fournis. »\n\n"
+            "Réponds à la question suivante uniquement en faisant un résumé des informations fournies et complètes la réponse avec tes connaissances internes si nécessaire."
+            "Précise toujours les sources des informations utilisées. Tu dois restituer la source de chaque information que tu utilises dans ta réponse avec sa date de publication.\n\n"
+            "Ne commence jamais par une excuse de type ‘en tant qu’IA, je n’ai pas accès au web’.\n\n"
             f"Question : {question}\n\n"
-            f"---\n"
-            f"Articles d’actualité à exploiter :\n"
+            "Articles d’actualité à exploiter :\n"
             f"{news_ctx}\n"
-            f"---\n"
             "Réponse :"
         )
     else:
-        prompt = question
+        prompt = (
+            "Réponds à la question suivante en t’appuyant sur tes connaissances propres. N’invente jamais de sources, de liens, de dates ou de citations.\n"
+            "Commence par identifier le thème principal de la question (par exemple : “les derniers développements en IA générative”) et donne une réponse basée uniquement sur tes connaissances internes.\n"
+            "Précise alors que tu t’appuies sur tes connaissances générales, sans inventer ni supposer d’actualité précise ou de sources.\n"
+            "Dans ce cas, indique aussi à l’utilisateur que pour obtenir des informations récentes, il est préférable de poser sa question sous la forme de mots-clés simples correspondant à un thème, comme “IA générative”, “cinéma”, “technologie”, etc., plutôt que sous forme de question complexe ou d’exemple.\n\n"
+            f"Question : {question}\n\n"
+            "Réponse :"
+        ).replace("{question}", question)
 
-    # 3) Génération Qwen dans un thread séparé
+    logger.info("Conv %s – prompt : %s", conv_id, prompt)
+    _append_log(conv_id, header_dt, "prompt", prompt)
+
+    # Génération Qwen dans un thread séparé
     loop = asyncio.get_running_loop()
     answer = await loop.run_in_executor(
         None,
