@@ -26,6 +26,7 @@ const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 export default function Home() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [convId, setConvId] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   /** Ajoute le message d’un rôle (user ou bot) dans la liste */
   const push = (content: string, sender: "user" | "bot") =>
@@ -43,6 +44,7 @@ export default function Home() {
   const handleSend = async (text: string) => {
     // 1) affiche tout de suite le message de l’utilisateur
     push(text, "user");
+    setIsLoading(true);
     // 2) requête POST   { question: "…" }
     try {
       const res = await fetch(`${API}/ask`, {
@@ -62,14 +64,16 @@ export default function Home() {
       push("❌ Erreur de connexion au serveur", "bot");
       /* eslint-disable no-console */
       console.error("API /ask error:", err);
-    }
+      } finally {
+        setIsLoading(false);
+      }
   };
 
   return (
-    <div className={`${geistSans.className} ${geistMono.className} w-full h-screen flex flex-col items-center bg-white font-[family-name:var(--font-geist-sans)]`}>
+    <div className={`${geistSans.className} ${geistMono.className} w-full h-screen flex justify-items-start items-center flex-col bg-white bg-tw3-gradient font-[family-name:var(--font-geist-sans)]`}>
       <Header />
-      <main className="flex flex-col items-center w-full h-[90%] bg-tw3-gradient">
-        <Chat messages={messages} user={dummyUser} onSend={handleSend} />
+      <main className="flex items-center flex-col w-full h-screen pb-1">
+        <Chat messages={messages} user={dummyUser} onSend={handleSend} isLoading={isLoading} />
       </main>
       <Footer />
     </div>

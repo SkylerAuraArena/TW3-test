@@ -8,15 +8,14 @@ from contextlib import asynccontextmanager
 from functools import lru_cache
 from pathlib import Path
 from uuid import uuid4
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 
-import httpx      
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
-from transformers import pipeline, logging as hf_logging # type: ignore
+from transformers import pipeline, logging as hf_logging  # type: ignore
 
-from search_tools import search_web
+from search_tools import search_news_async
 
 # ───── Logger ─────────────────────────────────────────────────────────
 logging.basicConfig(level=logging.INFO)
@@ -29,6 +28,7 @@ hf_logging.set_verbosity_error()
 class AskIn(BaseModel):
     question: str = Field(..., min_length=3)
     conv_id: str | None = None  # ID de conversation, None pour le 1er tour
+
 class AskOut(BaseModel):
     conv_id: str                      # renvoyé au front
     answer: str
@@ -41,25 +41,16 @@ LOG_DIR.mkdir(parents=True, exist_ok=True)
 
 def _append_log(conv_id: str, header_dt: str, role: str, text: str) -> None:
     """
-    Ajoute une ligne au fichier de conversation.  
+    Ajoute une ligne au fichier de conversation.
     Crée le fichier + un en-tête daté si c’est le premier appel.
-    Args:
-        conv_id (str): ID de la conversation.
-        header_dt (str): Date/heure pour l'en-tête du fichier.
-        role (str): Rôle de l'auteur du message ('user' ou 'bot').
-        text (str): Le texte du message à enregistrer.
-    Returns:
-        None
-    Raises:
-        OSError: Si le fichier ne peut pas être écrit.
     """
     file = LOG_DIR / f"conv-{conv_id}_{header_dt}.txt"
-
     is_new = not file.exists()
+    now = datetime.now(timezone.utc)
+    ts = now.isoformat(timespec="seconds").replace("+00:00", "Z")
     with file.open("a", encoding="utf-8") as f:
         if is_new:
             f.write(f"# Conversation {conv_id} – démarrée le {header_dt}\n\n")
-        ts = datetime.utcnow().isoformat(timespec="seconds") + "Z"
         f.write(f"[{ts}] {role.upper()}: {text}\n")
 
 
@@ -80,7 +71,7 @@ def get_pipe():
     )
 
 def generate_answer(prompt: str,
-                    max_new_tokens: int = 256,
+                    max_new_tokens: int = 4096,
                     temperature: float = 0.7) -> str:
     """Appelle le modèle et récupère la réponse texte.
     Args:
@@ -137,7 +128,7 @@ app = FastAPI(title="TW3 Chat Backend", lifespan=lifespan)
 # ───── Middleware ────────────────────────────────────────────────────
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],              # ↳ restreins à ["http://localhost:3000"] si tu préfères
+    allow_origins=["*"],
     allow_credentials=False,
     allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["*"],
@@ -155,50 +146,42 @@ def root() -> Dict[str, str]:
 
 @app.post("/ask", response_model=AskOut, tags=["Chat"])
 async def ask_handler(payload: AskIn) -> AskOut:
-    """
-    • Recherche Web asynchrone (SerpAPI)  
-    • Injection du contexte dans le prompt  
-    • Génération Qwen dans un thread séparé
-    Args:
-        payload (AskIn): Contient la question et l'ID de conversation.
-    Returns:
-        AskOut: Contient l'ID de conversation et la réponse générée.
-    Raises:
-        Exception: Si la génération échoue ou si le contexte Web est indisponible.
-    """
     conv_id = payload.conv_id or str(uuid4())
-    header_dt = datetime.utcnow().strftime("%Y-%m-%dT%H%M%S")
-
+    now = datetime.now(timezone.utc)
+    header_dt = now.strftime("%Y-%m-%dT%H%M%S")
     question = payload.question.strip()
-    logger.info("Conv %s – question : %s…", conv_id, question[:60])
-
-    # 1) log QUESTION
+    logger.info("Conv %s – question : %s…", conv_id, question)
     _append_log(conv_id, header_dt, "user", question)
 
-    # 2) contexte Web (ne bloque pas l'event-loop CPU)
-    web_ctx = await search_web(question)
-    if web_ctx:
-        logger.info("Web context found (%d chars)", len(web_ctx))
+    # 1) Recherche d’actualités asynchrone (search_news_async)
+    from_date = (now - timedelta(days=7)).strftime("%Y-%m-%d")
+    news_ctx = await search_news_async(question, from_date, "relevancy", max_results=5)
+    logger.info("Conv %s – found %d news articles", conv_id, news_ctx.count("- "))
+    _append_log(conv_id, header_dt, "news", news_ctx or "Aucune information d’actualité trouvée.")
+
+    # 2) Prompt directif pour forcer l’usage du contexte news
+    if news_ctx:
         prompt = (
-            f"Question de l'utilisateur :\n{question}\n\n"
-            f"Contexte Web (pistes externes, peut être incomplet) :\n"
-            f"{web_ctx}\n\n"
-            "Réponds en t'appuyant sur ce contexte quand il est pertinent, "
-            "et paraphrase les informations. Si le contexte est hors-sujet, "
-            "ignore-le simplement."
+            f"Réponds à la question suivante uniquement à partir des articles d’actualité ci-dessous."
+            f"N’invente rien, ne donne pas d’explications générales."
+            f"Ne commence jamais par une excuse de type ‘en tant qu’IA, je n’ai pas accès au web’."
+            f"Si aucune information des articles ne permet de répondre, écris : « Aucune information d’actualité pertinente trouvée dans les articles fournis. »\n\n"
+            f"Question : {question}\n\n"
+            f"---\n"
+            f"Articles d’actualité à exploiter :\n"
+            f"{news_ctx}\n"
+            f"---\n"
+            "Réponse :"
         )
     else:
         prompt = question
 
-    # 3) génération – on décale dans un pool thread pour ne pas bloquer l'IO
+    # 3) Génération Qwen dans un thread séparé
     loop = asyncio.get_running_loop()
-    # answer = await loop.run_in_executor(
-    #     None,
-    #     lambda: generate_answer(prompt)
-    # )
-    answer = prompt  # Simule la génération pour l'exemple
+    answer = await loop.run_in_executor(
+        None,
+        lambda: generate_answer(prompt)
+    )
 
-    # 4) log RÉPONSE
     _append_log(conv_id, header_dt, "bot", answer)
-
     return AskOut(conv_id=conv_id, answer=answer)

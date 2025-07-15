@@ -20,13 +20,22 @@ interface User {
 interface ChatProps {
   messages: Message[];
   user: User;
-  onSend: (text: string) => void; // le parent gère la persistance (Firebase ou autre)
+  onSend: (text: string) => void;
+  isLoading: boolean;
 }
 
 /* ------------------------------------------------------------------
    Composant
 ------------------------------------------------------------------ */
-const Chat: React.FC<ChatProps> = ({ messages, user, onSend }) => {
+const TypingLoader = () => (
+  <div className="tw3-typing-loader">
+    <span />
+    <span />
+    <span />
+  </div>
+);
+
+const Chat: React.FC<ChatProps> = ({ messages, user, onSend, isLoading }) => {
   const [text, setText] = useState('');
   const inputRef  = useRef<HTMLTextAreaElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -54,10 +63,10 @@ const Chat: React.FC<ChatProps> = ({ messages, user, onSend }) => {
   };
 
   return (
-    <div className='flex flex-col justify-center items-center w-11/12 h-10/12'>
+    <div className='flex flex-col justify-around items-center w-11/12 h-[100%] pb-2 lg:pb-6'>
       {/* ---------- barre de titre ---------- */}
       <header className="flexJIC w-full py-2 mt-3">
-        <h1 className="pb-6 text-5xl text-white">TW3 Qwen Chatbot</h1>
+        <h1 className="pb-6 text-5xl text-white text-center">TW3 Qwen Chatbot</h1>
       </header>
 
       {/* ---------- liste des messages ---------- */}
@@ -66,6 +75,11 @@ const Chat: React.FC<ChatProps> = ({ messages, user, onSend }) => {
           <ChatMessage key={msg.id} message={msg} currentUid={user.uid} />
         ))}
         <div ref={bottomRef} />
+        {isLoading && (
+          <div className="flex w-full justify-start mb-2">
+            <TypingLoader />
+          </div>
+        )}
       </section>
 
       {/* ---------- zone de saisie ---------- */}

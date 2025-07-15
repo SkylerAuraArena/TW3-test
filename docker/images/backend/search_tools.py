@@ -1,77 +1,63 @@
-# search_tools.py
-import os, logging, httpx
+import os
 from dotenv import load_dotenv
+import requests
+import asyncio
+
 load_dotenv()
+API_KEY = os.getenv("NEWSAPI_KEY")
+if not API_KEY:
+    raise ValueError("NEWSAPI_KEY manquante.")
 
-SERP_API_KEY = os.getenv("SERPAPI_KEY")
-logger = logging.getLogger("tw3.search")
-
-async def search_web(query: str, max_results: int = 5) -> str:
-    """
-    Interroge SerpAPI et renvoie un petit contexte texte (titres + snippets).
-    Retourne une chaîne vide si aucun résultat ou si l'API est KO.
-    Args:
-        query (str): La requête de recherche.
-        max_results (int): Nombre maximum de résultats à renvoyer.
-    Returns:
-        str: Contexte formaté ou chaîne vide si échec.
-    Raises:
-        Exception: Si l'API est inaccessible ou si la requête échoue.
-    Note:
-        - Utilise SerpAPI pour interroger Google Search.
-        - Limite les résultats à `max_results` (par défaut 5).
-        - Retourne une chaîne formatée avec chaque résultat sur une ligne.
-    """
-    if not SERP_API_KEY:
-        logger.warning("SERPAPI_KEY manquant ; recherche désactivée")
+def format_news_context(query="Generative AI", from_date="2025-07-10", sort="relevancy", max_results=5):
+    url = (f'https://newsapi.org/v2/everything?'
+           f'q={query}&'
+           f'from={from_date}&'
+           f'sortBy={sort}&'
+           f'pageSize={max_results}&'
+           f'language=fr&'
+           f'apiKey={API_KEY}')
+    resp = requests.get(url)
+    data = resp.json()
+    if data.get("status") != "ok" or "articles" not in data:
         return ""
+    # On extrait un résumé formaté pour chaque article
+    return "\n".join(
+        f"- {art['title']} ({art.get('source', {}).get('name','')}, {art['publishedAt'][:10]}) — {art.get('description','')}\n  {art['url']}"
+        for art in data["articles"][:max_results]
+    )
 
-    url = "https://serpapi.com/search"
-    params = {
-        "engine": "google",
-        "q": query,
-        "api_key": SERP_API_KEY,
-        "hl": "fr",
-        "num": max_results,
-    }
-    try:
-        async with httpx.AsyncClient() as client:
-            r = await client.get(url, params=params, timeout=8)
-            r.raise_for_status()
-            data = r.json()
-    except Exception as e:
-        logger.warning("Web search failed: %s", e)
-        return ""
-
-    results = data.get("organic_results", [])[:max_results]
-    if not results:
-        return ""
-
-    print(f"Web search for '{query}' returned {len(results)} results")
-    # On formate chaque résultat sur une ligne : « - Titre — extrait »
-    lines = [
-        f"- {res.get('title', '⟂ Sans titre')} — "
-        f"{res.get('snippet', res.get('snippet_highlighted', ''))}"
-        for res in results
-    ]
-    return "\n".join(lines)
+async def search_news_async(query, from_date, sort, max_results=5):
+    # Adapter pour être async : run format_news_context dans un thread
+    loop = asyncio.get_running_loop()
+    return await loop.run_in_executor(
+        None, lambda: format_news_context(query, from_date, sort, max_results)
+    )
 
 if __name__ == "__main__":
-    """
-    Point d'entrée pour tester la recherche Web en ligne de commande.
-    Usage : python search_tools.py "votre requête"
-    Exemple : python search_tools.py "Python async programming"
-    Note : Nécessite la variable d'environnement SERPAPI_KEY définie.
-    """
-    import asyncio
-    import sys
+    import argparse
+    from datetime import datetime, timedelta
 
-    if len(sys.argv) < 2:
-        print("Usage : python search_tools.py 'votre requête'")
-        sys.exit(1)
+    parser = argparse.ArgumentParser(description="Recherche d'actualités via NewsAPI")
+    parser.add_argument("query", nargs="+", help="Texte à chercher (ex: 'générative AI')")
+    parser.add_argument("--from-date", default=(datetime.now() - timedelta(days=7)).strftime("%Y-%m-%d"),
+                        help="Date de début (YYYY-MM-DD, défaut = il y a 7 jours)")
+    parser.add_argument("--sort", default="relevancy", choices=["relevancy", "popularity", "publishedAt"],
+                        help="Mode de tri (défaut: relevancy)")
+    parser.add_argument("--max-results", type=int, default=5, help="Nombre d'articles (défaut: 5)")
 
-    query = " ".join(sys.argv[1:])
+    args = parser.parse_args()
+    query_str = " ".join(args.query)
 
-    result = asyncio.run(search_web(query))
-    print("\nRésultats Web :\n")
-    print(result or "[Aucun résultat]")
+    # Appel synchrone pour la ligne de commande
+    print(f"Recherche actualités pour : {query_str}\n")
+    context = format_news_context(
+        query=query_str,
+        from_date=args.from_date,
+        sort=args.sort,
+        max_results=args.max_results
+    )
+
+    if context:
+        print(context)
+    else:
+        print("[Aucun résultat trouvé]")

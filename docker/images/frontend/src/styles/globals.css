@@ -48,3 +48,26 @@ nextjs-portal {
     rgb(5 4 21) 100%     /* haut */
   );
 }
+
+.tw3-typing-loader {
+  display: flex;
+  gap: 6px;
+  align-items: flex-end;
+  height: 18px;
+  margin-left: 12px;
+}
+.tw3-typing-loader span {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background: #2460a7;  /* ou la couleur de ton thème */
+  border-radius: 50%;
+  animation: tw3-bounce 1s infinite;
+}
+.tw3-typing-loader span:nth-child(2) { animation-delay: 0.2s; }
+.tw3-typing-loader span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes tw3-bounce {
+  0%, 100%   { transform: translateY(0); }
+  50%        { transform: translateY(-8px);}
+}
