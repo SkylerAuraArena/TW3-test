@@ -1,5 +1,5 @@
 ═══════════════════════════════════════════════════════════════════════════════
-TW3 Setup Log - Started at 2025-07-16 09:53:23
+TW3 Setup Log - Started at 2025-07-16 11:09:23
 ═══════════════════════════════════════════════════════════════════════════════
 Starting TW3 environment setup...
 All output logged to: setup.log
@@ -9,23 +9,17 @@ Configuration:
    Backend Port: 8001
    Frontend Port: 3000
    Images to build: 2
-[09:53:23] INFO: Checking prerequisites...
-[09:53:24] SUCCESS: All prerequisites checked successfully
-[09:53:24] INFO: Checking for Docker network 'tw3_network'...
-[09:53:24] INFO: Docker network 'tw3_network' already exists.
-[09:53:24] INFO: Checking for Docker volume 'tw3_data_volume'...
-[09:53:24] INFO: Docker volume 'tw3_data_volume' already exists.
-[09:53:24] INFO: Building Docker images if necessary...
-[09:53:24] INFO: Docker image 'tw3_backend:1.0' already exists. Skipping build.
-[09:53:24] INFO: Docker image 'tw3_frontend:1.0' already exists. Skipping build.
-[09:53:24] INFO: Starting Docker Compose...
- Network docker_external_network  Creating
- Network docker_external_network  Created
- Network docker_internal_network  Creating
- Network docker_internal_network  Created
- Container backend_container  Creating
+[11:09:23] INFO: Checking prerequisites...
+[11:09:23] SUCCESS: All prerequisites checked successfully
+[11:09:23] INFO: Checking for Docker network 'tw3_network'...
+[11:09:23] INFO: Docker network 'tw3_network' already exists.
+[11:09:23] INFO: Checking for Docker volume 'tw3_data_volume'...
+[11:09:23] INFO: Docker volume 'tw3_data_volume' already exists.
+[11:09:23] INFO: Building Docker images if necessary...
+[11:09:23] INFO: Docker image 'tw3_backend:1.0' already exists. Skipping build.
+[11:09:23] INFO: Docker image 'tw3_frontend:1.0' already exists. Skipping build.
+[11:09:23] INFO: Starting Docker Compose...
  Container backend_container  Created
- Container frontend_container  Creating
  Container frontend_container  Created
 Attaching to backend_container, frontend_container
 frontend_container  | 
@@ -37,106 +31,19 @@ frontend_container  |    - Local:        http://localhost:3000
 frontend_container  |    - Network:      http://172.19.0.3:3000
 frontend_container  | 
 frontend_container  |  ✓ Starting...
-frontend_container  |  ✓ Ready in 392ms
+frontend_container  |  ✓ Ready in 549ms
 backend_container   | Démarrage de l'application FastAPI backend...
-backend_container   | 2025-07-16 07:53:29,684 - tw3.chat - INFO - Modules d'architecture chargés avec succès
-backend_container   | 2025-07-16 07:53:29,686 - tw3.chat - INFO - Répertoire de logs créé: /app/volume/conversations
-backend_container   | 2025-07-16 07:53:29,686 - tw3.chat - INFO - Health check manager initialisé
+backend_container   | 2025-07-16 09:09:29,716 - tw3.chat - INFO - Modules d'architecture chargés avec succès
+backend_container   | 2025-07-16 09:09:29,717 - tw3.chat - INFO - Répertoire de logs créé: /app/volume/conversations
+backend_container   | 2025-07-16 09:09:29,717 - tw3.chat - INFO - Health check manager initialisé
 backend_container   | INFO:     Started server process [9]
 backend_container   | INFO:     Waiting for application startup.
-backend_container   | 2025-07-16 07:53:29,687 - tw3.chat - INFO - Initialisation de l'application TW3...
-backend_container   | 2025-07-16 07:53:29,687 - tw3.chat - INFO - Preloading Qwen pipeline for faster responses…
-backend_container   | 2025-07-16 07:53:29,687 - tw3.chat - INFO - Loading Qwen pipeline… (first call only)
-backend_container   | Fetching 4 files:   0%|          | 0/4 [00:00<?, ?it/s]Fetching 4 files:  25%|██▌       | 1/4 [01:34<04:44, 94.99s/it]Fetching 4 files: 100%|██████████| 4/4 [01:34<00:00, 23.75s/it]
-backend_container   | Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:00<00:00, 25.16it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 33.50it/s]
-backend_container   | 2025-07-16 07:55:05,868 - accelerate.big_modeling - WARNING - Some parameters are on the meta device because they were offloaded to the cpu and disk.
-backend_container   | 2025-07-16 07:55:07,219 - tw3.chat - INFO - Cache manager started
-backend_container   | 2025-07-16 07:55:07,219 - tw3.chat - INFO - Health monitoring started
-backend_container   | 2025-07-16 07:55:07,219 - tw3.chat - INFO - Application TW3 initialisée avec succès
+backend_container   | 2025-07-16 09:09:29,719 - tw3.chat - INFO - Initialisation de l'application TW3...
+backend_container   | 2025-07-16 09:09:29,719 - tw3.chat - INFO - Preloading Qwen pipeline for faster responses…
+backend_container   | 2025-07-16 09:09:29,719 - tw3.chat - INFO - Loading Qwen pipeline… (first call only)
+backend_container   | Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 66.88it/s]
+backend_container   | 2025-07-16 09:09:30,703 - tw3.chat - INFO - Cache manager started
+backend_container   | 2025-07-16 09:09:30,703 - tw3.chat - INFO - Health monitoring started
+backend_container   | 2025-07-16 09:09:30,703 - tw3.chat - INFO - Application TW3 initialisée avec succès
 backend_container   | INFO:     Application startup complete.
 backend_container   | INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
-backend_container   | INFO:     192.168.65.1:31358 - "GET /docs HTTP/1.1" 200 OK
-backend_container   | INFO:     192.168.65.1:31358 - "GET /openapi.json HTTP/1.1" 200 OK
-backend_container   | 2025-07-16 07:55:31,454 - tw3.chat - INFO - Health check endpoint called
-backend_container   | INFO:     192.168.65.1:31358 - "GET / HTTP/1.1" 200 OK
-backend_container   | INFO:     192.168.65.1:31358 - "GET /health HTTP/1.1" 200 OK
-backend_container   | INFO:     192.168.65.1:63222 - "GET /metrics HTTP/1.1" 200 OK
-backend_container   | INFO:     192.168.65.1:51480 - "OPTIONS /ask HTTP/1.1" 200 OK
-backend_container   | 2025-07-16 07:56:29,016 - tw3.chat - INFO - Conv 3b05bb84-7339-4279-b206-06e63b5aa4dd – question : France…
-backend_container   | 2025-07-16 07:56:29,514 - tw3.chat - INFO - NewsAPI appelé avec succès pour: France...
-backend_container   | 2025-07-16 07:56:29,514 - tw3.chat - INFO - Conv 3b05bb84-7339-4279-b206-06e63b5aa4dd – found 5 news articles
-backend_container   | 2025-07-16 07:56:29,514 - tw3.chat - INFO - Conv 3b05bb84-7339-4279-b206-06e63b5aa4dd – prompt : Réponds à la question suivante uniquement en faisant un résumé des informations fournies et complètes la réponse avec tes connaissances internes si nécessaire.Précise toujours les sources des informations utilisées. Tu dois restituer la source de chaque information que tu utilises dans ta réponse avec sa date de publication.
-backend_container   | 
-backend_container   | Ne commence jamais par une excuse de type ‘en tant qu’IA, je n’ai pas accès au web’.
-backend_container   | 
-backend_container   | Question : France
-backend_container   | 
-backend_container   | Articles d’actualité à exploiter :
-backend_container   | - Farage dismisses UK-France returns deal (Yahoo Entertainment, 2025-07-10) — None
-backend_container   |   https://consent.yahoo.com/v2/collectConsent?sessionId=1_cc-session_0098871c-f7f9-4180-bb0f-e374647c012b
-backend_container   | - Israeli strike on Tehran's Evin prison unacceptable, France says (Yahoo Entertainment, 2025-06-23) — None
-backend_container   |   https://consent.yahoo.com/v2/collectConsent?sessionId=1_cc-session_539a5263-5b47-457a-a523-15336d769283
-backend_container   | - Les images des orages en France (Le Monde, 2025-06-26) — Deux personnes sont mortes, dans le Tarn-et-Garonne et en Mayenne, en lien avec les intempéries. D’après Météo-France, une « baisse notable » des températures est attendue jeudi.
-backend_container   |   https://www.lemonde.fr/planete/article/2025/06/26/les-images-des-orages-en-france-dans-la-nuit-de-mercredi-a-jeudi_6615954_3244.html
-backend_container   | - EN DIRECT | Stade toulousain-Union Bordeaux-Bègles : suivez la finale du Top 14 (Le Monde, 2025-06-28) — Toujours privés d’Antoine Dupont, blessé, les doubles champions de France toulousains défient les Bordelais de Matthieu Jalibert et Maxime Lucu, samedi, au Stade de France, dans un remake de la dernière finale du Top 14.
-backend_container   |   https://www.lemonde.fr/sport/live/2025/06/28/en-direct-stade-toulousain-union-bordeaux-begles-suivez-la-finale-du-top-14_6616306_3242.html
-backend_container   | - Laurent Saint-Martin, ministre délégué chargé du commerce extérieur, est l’invité de « Questions politiques » (Le Monde, 2025-07-06) — Le ministre délégué chargé du commerce extérieur et des Français de l’étranger est l’invité de France Inter, de France Télévisions et du « Monde », dimanche 6 juillet, de midi à 13 heures.
-backend_container   |   https://www.lemonde.fr/politique/article/2025/07/06/laurent-saint-martin-ministre-delegue-charge-du-commerce-exterieur-est-l-invite-de-questions-politiques_6619253_823448.html
-backend_container   | Réponse :
-backend_container   | 2025-07-16 08:12:59,787 - monitoring - WARNING - Newsapi health issue: Timeout après 10 secondes
-backend_container   | INFO:     192.168.65.1:51480 - "POST /ask HTTP/1.1" 200 OK
-backend_container   | INFO:     192.168.65.1:55722 - "OPTIONS /ask HTTP/1.1" 200 OK
-backend_container   | 2025-07-16 08:16:28,974 - tw3.chat - INFO - Conv 3b05bb84-7339-4279-b206-06e63b5aa4dd – question : Quels sont les derniers développements en IA générative annoncés cette semaine? Donne-moi 3 exemples concrets avec leurs sources.…
-backend_container   | 2025-07-16 08:16:29,451 - tw3.chat - INFO - NewsAPI appelé avec succès pour: Quels sont les derniers développements en IA génér...
-backend_container   | 2025-07-16 08:16:29,451 - tw3.chat - INFO - Conv 3b05bb84-7339-4279-b206-06e63b5aa4dd – found 0 news articles
-backend_container   | 2025-07-16 08:16:29,452 - tw3.chat - INFO - Conv 3b05bb84-7339-4279-b206-06e63b5aa4dd – prompt : Tu vas répondre à une question en utilisant uniquement tes connaissances internes.
-backend_container   | 
-backend_container   | INSTRUCTIONS :
-backend_container   | - Réponds de manière factuelle et précise.
-backend_container   | - N'invente jamais de sources, de liens, de dates ou de citations.
-backend_container   | - Indique clairement que tu t'appuies sur tes connaissances générales, sans accès à l'actualité.
-backend_container   | - Si la question porte sur des actualités récentes ou des développements très récents, indique que tu ne peux pas fournir de sources d'actualité ou d'exemples récents précis.
-backend_container   | - Si la question porte sur des actualités récentes, termine ta réponse comme ceci :
-backend_container   | 'Pour obtenir des informations actualisées, veuillez poser votre question sous forme de mots-clés simples comme "IA générative", "technologie", "cinéma".'
-backend_container   | 
-backend_container   | - **IMPORTANT : Termine toujours ta réponse en conseillant à l'utilisateur de reformuler sa question en français avec des mots-clés simples comme 'IA générative', 'technologie', 'cinéma' pour obtenir des informations d'actualité précises.**
-backend_container   | 
-backend_container   | Question : Quels sont les derniers développements en IA générative annoncés cette semaine? Donne-moi 3 exemples concrets avec leurs sources.
-backend_container   | 
-backend_container   | Réponse :
-backend_container   | INFO:     192.168.65.1:55722 - "POST /ask HTTP/1.1" 200 OK
-backend_container   | 2025-07-16 08:24:09,545 - tw3.chat - INFO - Conv 3b05bb84-7339-4279-b206-06e63b5aa4dd – question : IA générative…
-backend_container   | 2025-07-16 08:24:09,713 - tw3.chat - INFO - NewsAPI appelé avec succès pour: IA générative...
-backend_container   | 2025-07-16 08:24:09,713 - tw3.chat - INFO - Conv 3b05bb84-7339-4279-b206-06e63b5aa4dd – found 5 news articles
-backend_container   | 2025-07-16 08:24:09,713 - tw3.chat - INFO - Conv 3b05bb84-7339-4279-b206-06e63b5aa4dd – prompt : Réponds à la question suivante uniquement en faisant un résumé des informations fournies et complètes la réponse avec tes connaissances internes si nécessaire.Précise toujours les sources des informations utilisées. Tu dois restituer la source de chaque information que tu utilises dans ta réponse avec sa date de publication.
-backend_container   | 
-backend_container   | Ne commence jamais par une excuse de type ‘en tant qu’IA, je n’ai pas accès au web’.
-backend_container   | 
-backend_container   | Question : IA générative
-backend_container   | 
-backend_container   | Articles d’actualité à exploiter :
-backend_container   | - Pour ce proche de Nintendo, l’IA générative va devenir “une question de survie” pour les studios de jeux vidéo (Presse-citron, 2025-06-23) — Pour Masahiro Sakurai (qui travaille notamment pour le compte d'un certain Nintendo), l'emploi de l’IA générative va devenir une nécessité pour la survie des studios de jeux vidéo.
-backend_container   |   https://www.presse-citron.net/nintendo-ia-generative-question-survie-studios-jeux-video/
-backend_container   | - Le scraping payant : vers un changement radical du modèle économique de l’IA générative ? (Journal du geek, 2025-07-04) — En faisant payer les systèmes automatiques qui moissonnent du contenu sur Internet, Cloudflare pourrait lancer un vrai changement de paradigme susceptible de bouleverser le modèle économique d'OpenAI et consorts.
-backend_container   |   https://www.journaldugeek.com/2025/07/04/le-scraping-payant-vers-un-changement-radical-du-modele-economique-de-lia-generative/
-backend_container   | - ChatGPT ou Claude pour insuffler une nouvelle vie au cerveau malade de Siri ? (Journal du geek, 2025-07-01) — Siri, c'est compliqué. Apple avait pourtant ouvert la voie avec son assistant dès 2011, mais le constructeur n'a pas su le faire évoluer, et l'avènement de l'IA générative a encore creusé le fossé — devenu gouffre insondable — entre Siri et ses rivaux.
-backend_container   |   https://www.journaldugeek.com/2025/07/01/chatgpt-ou-claude-pour-insuffler-une-nouvelle-vie-au-cerveau-malade-de-siri/
-backend_container   | - Films, séries : voici comment l’IA va bousculer nos habitudes sur Netflix (Presse-citron, 2025-06-30) — Netflix a déjà annoncé son chatbot IA, ainsi qu’un format publicitaire qui s’appuie sur l’intelligence artificielle pour se fondre dans le contenu. Et d’après un article de Business Insider, la plateforme a d’autres idées encore plus audacieuses.
-backend_container   |   https://www.presse-citron.net/films-series-voici-comment-lia-va-bousculer-nos-habitudes-sur-netflix/
-backend_container   | - Face aux deepfakes, le Danemark veut faire évoluer le droit d’auteur (Journal du geek, 2025-06-27) — L'amendement proposé offrirait notamment des recours solides aux personnes dont l'identité a été usurpée grâce à des images générées par des systèmes basés sur l'IA générative.
-backend_container   |   https://www.journaldugeek.com/2025/06/27/le-danemark-veut-faire-evoluer-le-droit-dauteur-en-reponse-aux-deepfakes/
-backend_container   | Réponse :
-backend_container   | 2025-07-16 08:37:27,596 - monitoring - WARNING - Newsapi health issue: Timeout après 10 secondes
-backend_container   | 2025-07-16 08:43:12,403 - monitoring - WARNING - Newsapi health issue: Timeout après 10 secondes
-backend_container   | INFO:     192.168.65.1:51073 - "POST /ask HTTP/1.1" 200 OK
-backend_container   | 2025-07-16 08:48:42,818 - monitoring - WARNING - Newsapi health issue: Timeout après 10 secondes
-backend_container   | 2025-07-16 08:54:16,151 - monitoring - WARNING - Newsapi health issue: Timeout après 10 secondes
-backend_container   | 2025-07-16 08:59:46,461 - monitoring - WARNING - Newsapi health issue: Timeout après 10 secondes
-backend_container   | 2025-07-16 09:05:17,743 - monitoring - WARNING - Newsapi health issue: Timeout après 10 secondes
-Gracefully stopping... (press Ctrl+C again to force)
- Container frontend_container  Stopping
- Container frontend_container  Stopped
- Container backend_container  Stopping
- Container backend_container  Stopped
-canceled
-[11:05:25] WARNING: Setup interrupted. Cleaning up...
