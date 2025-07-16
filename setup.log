@@ -48,3 +48,4 @@ backend_container   | 2025-07-16 09:09:30,703 - tw3.chat - INFO - Application TW
 backend_container   | INFO:     Application startup complete.
 backend_container   | INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
 backend_container   | 2025-07-16 09:15:01,893 - monitoring - WARNING - Newsapi health issue: Timeout après 10 secondes
+backend_container   | 2025-07-16 09:20:33,053 - monitoring - WARNING - Newsapi health issue: Timeout après 10 secondes

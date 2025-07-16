@@ -7,8 +7,9 @@ TW3 est une application de chat intelligente qui combine un modèle de langage Q
 Voici un aperçu de l’application :
 
 ![Capture d’écran](Screenshot.png)
-![Capture d’écran 2](Screenshot 2.png)
-![Capture d’écran 3](Screenshot 3.png)
+
+![Capture d’écran 2](Screenshot2.png)
+![Capture d’écran 3](Screenshot3.png)
 
 ## Architecture Modulaire
 
