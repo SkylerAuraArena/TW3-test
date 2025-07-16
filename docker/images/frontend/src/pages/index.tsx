@@ -61,7 +61,7 @@ export default function Home() {
       // 3) ajoute la réponse du bot
       push(data.answer, "bot");
     } catch (err) {
-      push("❌ Erreur de connexion au serveur", "bot");
+      push("ERROR: Connection error to server", "bot");
       /* eslint-disable no-console */
       console.error("API /ask error:", err);
       } finally {

@@ -54,7 +54,7 @@ export const MOCK_MESSAGES: Message[] = [
   {
     id: 'm-005',
     date: new Date('2025-07-13T09:03:41Z'),
-    message: 'Je viens de déployer la PR #42 en staging 🚀',
+    message: 'Je viens de déployer la PR #42 en staging',
     senderId: USERS[1].uid,
     senderEmail: USERS[1].email,
   },
@@ -68,7 +68,7 @@ export const MOCK_MESSAGES: Message[] = [
   {
     id: 'm-007',
     date: new Date('2025-07-13T09:05:12Z'),
-    message: 'Les tests passent ✅',
+    message: 'Les tests passent [OK]',
     senderId: USERS[3].uid,
     senderEmail: USERS[3].email,
   },
@@ -82,7 +82,7 @@ export const MOCK_MESSAGES: Message[] = [
   {
     id: 'm-009',
     date: new Date('2025-07-13T09:07:05Z'),
-    message: 'Go ! 🎉',
+    message: 'Go !',
     senderId: USERS[0].uid,
     senderEmail: USERS[0].email,
   },

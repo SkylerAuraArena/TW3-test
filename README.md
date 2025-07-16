@@ -2,7 +2,9 @@
 
 ## Description
 
-TW3 est une application de chat intelligente qui combine un modèle de langage Qwen 7B avec une API d'actualités NewsAPI pou## 🏗️ Architecture Modulaire
+TW3 est une application de chat intelligente qui combine un modèle de langage Qwen 7B avec une API d'actualités NewsAPI pour fournir des réponses contextualisées et informées.
+
+## Architecture Modulaire
 
 TW3 adopte une architecture modulaire robuste pour assurer la maintenabilité, la testabilité et la scalabilité :
 
@@ -42,7 +44,7 @@ src/
 - **Valeurs par défaut** : configuration robuste avec fallbacks
 - **Types sécurisés** : validation des types de données
 
-## 📋 API Documentation
+## API Documentation
 
 ### Endpoints Principaux
 
@@ -109,7 +111,7 @@ Statistiques détaillées pour monitoring et optimisation.
 }
 ```
 
-## 🧪 Tests et Qualité fournir des réponses contextuelles et actualisées. L'application utilise une architecture modulaire robuste avec cache intelligent, resilience patterns et monitoring avancé.
+## Tests et Qualité fournir des réponses contextuelles et actualisées. L'application utilise une architecture modulaire robuste avec cache intelligent, resilience patterns et monitoring avancé.
 
 ### Architecture technique
 
@@ -131,13 +133,13 @@ Statistiques détaillées pour monitoring et optimisation.
 - **Tests** : Jest et React Testing Library
 
 #### Fonctionnalités avancées
-- ✅ **Cache intelligent** : Cache LRU avec TTL pour actualités et réponses IA
-- ✅ **Resilience** : Circuit breaker et retry automatique pour APIs externes
-- ✅ **Monitoring** : Health checks détaillés et métriques en temps réel
-- ✅ **Tests automatisés** : Coverage backend et frontend
-- ✅ **Configuration centralisée** : Gestion des environnements
-- ✅ **Logging structuré** : Logs JSON pour Azure Monitor
-- ✅ **Production-ready** : Optimisations performance et sécurité
+- [OK] **Cache intelligent** : Cache LRU avec TTL pour actualités et réponses IA
+- [OK] **Resilience** : Circuit breaker et retry automatique pour APIs externes
+- [OK] **Monitoring** : Health checks détaillés et métriques en temps réel
+- [OK] **Tests automatisés** : Coverage backend et frontend
+- [OK] **Configuration centralisée** : Gestion des environnements
+- [OK] **Logging structuré** : Logs JSON pour Azure Monitor
+- [OK] **Production-ready** : Optimisations performance et sécurité
 
 ## 📋 Table des matières
 
@@ -148,7 +150,7 @@ Statistiques détaillées pour monitoring et optimisation.
 5. [Monitoring et métriques](#monitoring-et-métriques)
 6. [Stratégie de mise en production](#stratégie-de-mise-en-production)
 
-## 🚀 Installation locale
+## Installation locale
 
 ### Prérequis
 
@@ -203,7 +205,7 @@ npm install
 npm run dev
 ```
 
-## 🏗️ Architecture de l'application
+## Architecture de l'application
 
 ### Structure du projet
 
@@ -268,7 +270,7 @@ tw3-test/
 | `/ask` | POST | Chat avec le modèle IA |
 | `/docs` | GET | Documentation API (Swagger) |
 
-## 🧪 Tests et qualité
+## Tests et qualité
 
 ### Tests automatisés
 
@@ -302,21 +304,21 @@ npm run test:ci            # Mode CI/CD optimisé
 ### Couverture de tests complète
 
 #### Backend (Python/FastAPI)
-- ✅ **Endpoints API** : `/ask`, `/health`, `/metrics` avec tous les cas d'usage
-- ✅ **Intégration NewsAPI** : cache, circuit breaker, gestion d'erreurs
-- ✅ **Modèle IA** : génération, cache, formats de réponse
-- ✅ **Modules de résilience** : retry, timeout, fallback
-- ✅ **Système de cache** : TTL, éviction LRU, statistiques
-- ✅ **Monitoring** : health checks, métriques système
-- ✅ **Gestion d'erreurs** : validation, sanitization, logging
+- [OK] **Endpoints API** : `/ask`, `/health`, `/metrics` avec tous les cas d'usage
+- [OK] **Intégration NewsAPI** : cache, circuit breaker, gestion d'erreurs
+- [OK] **Modèle IA** : génération, cache, formats de réponse
+- [OK] **Modules de résilience** : retry, timeout, fallback
+- [OK] **Système de cache** : TTL, éviction LRU, statistiques
+- [OK] **Monitoring** : health checks, métriques système
+- [OK] **Gestion d'erreurs** : validation, sanitization, logging
 
 #### Frontend (React/Next.js)
-- ✅ **Composants UI** : Chat, Header, Footer, ChatMessage
-- ✅ **Interactions utilisateur** : envoi messages, état conversation
-- ✅ **Communication API** : appels backend, gestion réponses
-- ✅ **Responsive design** : adaptation écrans, mobile-first
-- ✅ **Accessibilité** : navigation clavier, lecteurs d'écran
-- ✅ **Gestion d'état** : hooks React, persistence locale
+- [OK] **Composants UI** : Chat, Header, Footer, ChatMessage
+- [OK] **Interactions utilisateur** : envoi messages, état conversation
+- [OK] **Communication API** : appels backend, gestion réponses
+- [OK] **Responsive design** : adaptation écrans, mobile-first
+- [OK] **Accessibilité** : navigation clavier, lecteurs d'écran
+- [OK] **Gestion d'état** : hooks React, persistence locale
 
 ### Stratégies de test avancées
 
@@ -364,13 +366,13 @@ pytest tests/test_backend.py::test_circuit_breaker_recovery -v
 
 | Métrique | Target | Actuel | Status |
 |----------|---------|---------|---------|
-| **Couverture Backend** | >90% | 94% | ✅ |
-| **Couverture Frontend** | >85% | 88% | ✅ |
-| **Performance /ask** | <3s | 1.8s | ✅ |
-| **Disponibilité** | >99.5% | 99.8% | ✅ |
-| **Taux d'erreur** | <1% | 0.3% | ✅ |
+| **Couverture Backend** | >90% | 94% | [OK] |
+| **Couverture Frontend** | >85% | 88% | [OK] |
+| **Performance /ask** | <3s | 1.8s | [OK] |
+| **Disponibilité** | >99.5% | 99.8% | [OK] |
+| **Taux d'erreur** | <1% | 0.3% | [OK] |
 
-## 📊 Monitoring et métriques
+## Monitoring et métriques
 
 ### Health checks en temps réel
 
@@ -434,7 +436,7 @@ Endpoint `/metrics` pour monitoring externe (Prometheus, Azure Monitor) :
 | Erreurs API > 5% | Immédiat | Immédiat |
 | Latence > 10s | 1 minute | 30 secondes |
 
-## ☁️ Plan de déploiement Azure
+## Plan de déploiement Azure
 
 ### Architecture cloud-native recommandée
 
@@ -875,24 +877,24 @@ az afd profile create \
 ### Prérequis techniques et organisationnels
 
 #### Organisationnels
-- ✅ Abonnement Azure avec droits Owner/Contributor
-- ✅ Budget mensuel approuvé (€600-900)
-- ✅ Équipe DevOps formée Azure
-- ✅ Plan de sauvegarde/restauration validé
+- [OK] Abonnement Azure avec droits Owner/Contributor
+- [OK] Budget mensuel approuvé (€600-900)
+- [OK] Équipe DevOps formée Azure
+- [OK] Plan de sauvegarde/restauration validé
 
 #### Techniques
-- ✅ Azure CLI installé et configuré
-- ✅ Docker Desktop fonctionnel
-- ✅ Clé API NewsAPI valide
-- ✅ Certificats SSL/TLS (Let's Encrypt via Front Door)
-- ✅ Accès aux repos Git (GitHub Actions)
+- [OK] Azure CLI installé et configuré
+- [OK] Docker Desktop fonctionnel
+- [OK] Clé API NewsAPI valide
+- [OK] Certificats SSL/TLS (Let's Encrypt via Front Door)
+- [OK] Accès aux repos Git (GitHub Actions)
 
 #### Sécurité et Permissions
-- ✅ Azure AD configuré avec MFA
-- ✅ Politiques RBAC granulaires
-- ✅ Network Security Groups restrictifs
-- ✅ Private endpoints pour ACR et Storage
-- ✅ WAF configuré sur Front Door
+- [OK] Azure AD configuré avec MFA
+- [OK] Politiques RBAC granulaires
+- [OK] Network Security Groups restrictifs
+- [OK] Private endpoints pour ACR et Storage
+- [OK] WAF configuré sur Front Door
 
 ## 💰 Estimation des coûts
 
@@ -1009,7 +1011,7 @@ jobs:
 - **Feature flags** : Activation progressive des nouvelles fonctionnalités
 - **Canary releases** : 5% du trafic sur nouvelle version
 
-## 📊 Monitoring et sécurité
+## Monitoring et sécurité
 
 ### Monitoring avec Azure Monitor
 
@@ -1169,7 +1171,7 @@ az backup policy create \
 - **Multi-region deployment** : Envisagé pour v2.0
 - **Backup cross-region** : Réplication géographique
 
-## 🔧 Maintenance et évolutions
+## Maintenance et évolutions
 
 ### Mises à jour planifiées
 

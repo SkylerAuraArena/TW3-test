@@ -428,7 +428,7 @@ def root() -> Dict[str, str]:
         Dict[str, str]: Message de bienvenue.
     """
     logger.info("Health check endpoint called")
-    return {"data": "Bienvenue sur l'API TW3 Chat 🎉"}
+    return {"data": "Bienvenue sur l'API TW3 Chat"}
 
 
 @app.get("/health", tags=["Health"])

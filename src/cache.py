@@ -298,21 +298,21 @@ def print_stats():
         if args.format == "json":
             print(json.dumps(stats, indent=2))
         else:
-            print("📊 TW3 Cache Statistics")
+            print("TW3 Cache Statistics")
             print("=" * 40)
             
             global_stats = stats["global"]
-            print(f"🔢 Total caches: {global_stats['total_caches']}")
-            print(f"📝 Total entries: {global_stats['total_entries']}")
-            print(f"💾 Memory usage: {global_stats['memory_usage_mb']:.1f} MB")
+            print(f"Total caches: {global_stats['total_caches']}")
+            print(f"Total entries: {global_stats['total_entries']}")
+            print(f"Memory usage: {global_stats['memory_usage_mb']:.1f} MB")
             print()
             
             if args.details:
                 for cache_name, cache_stats in stats["caches"].items():
                     hit_rate = cache_stats["hit_rate"] * 100
-                    emoji = "🟢" if hit_rate > 90 else "🟡" if hit_rate > 70 else "🔴"
+                    status = "[GOOD]" if hit_rate > 90 else "[OK]" if hit_rate > 70 else "[POOR]"
                     
-                    print(f"{emoji} {cache_name.upper()}")
+                    print(f"{status} {cache_name.upper()}")
                     print(f"   Entries: {cache_stats['entries']}")
                     print(f"   Hits: {cache_stats['hits']}")
                     print(f"   Misses: {cache_stats['misses']}")
@@ -323,7 +323,7 @@ def print_stats():
         return 0
         
     except Exception as e:
-        print(f"❌ Erreur lors de la récupération des stats: {e}")
+        print(f"ERROR: Failed to retrieve cache stats: {e}")
         return 1
 
 

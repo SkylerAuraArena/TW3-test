@@ -335,7 +335,7 @@ def main():
     # Configuration de base
     api_key = os.getenv("NEWSAPI_KEY")
     if not api_key:
-        print("❌ NEWSAPI_KEY non configurée")
+        print("ERROR: NEWSAPI_KEY not configured")
         return 1
     
     # Création du health manager
@@ -360,17 +360,17 @@ def main():
         else:
             for service, health in results.items():
                 status = health.get("status", "unknown")
-                emoji = "✅" if status == "healthy" else "⚠️" if status == "degraded" else "❌"
-                print(f"{emoji} {service.upper()}: {status}")
+                prefix = "[OK]" if status == "healthy" else "[WARN]" if status == "degraded" else "[ERROR]"
+                print(f"{prefix} {service.upper()}: {status}")
                 if health.get("response_time_ms"):
-                    print(f"   Temps de réponse: {health['response_time_ms']:.1f}ms")
+                    print(f"   Response time: {health['response_time_ms']:.1f}ms")
                 if health.get("error_message"):
-                    print(f"   Erreur: {health['error_message']}")
+                    print(f"   Error: {health['error_message']}")
         
         return 0
         
     except Exception as e:
-        print(f"❌ Erreur lors du health check: {e}")
+        print(f"ERROR: Health check failed: {e}")
         return 1
 
 

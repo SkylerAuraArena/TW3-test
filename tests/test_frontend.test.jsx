@@ -89,7 +89,7 @@ describe('TW3 Chat Application', () => {
       fireEvent.click(button)
 
       await waitFor(() => {
-        expect(screen.getByText(/❌ Erreur de connexion au serveur/)).toBeInTheDocument()
+        expect(screen.getByText(/ERROR: Connection error to server/)).toBeInTheDocument()
       })
     })
   })
