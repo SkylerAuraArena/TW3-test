@@ -95,7 +95,7 @@ class NewsAPIHealthChecker:
             }
             
             async with aiohttp.ClientSession() as session:
-                async with session.get(url, params=params, timeout=aiohttp.ClientTimeout(total=5)) as response:
+                async with session.get(url, params=params, timeout=aiohttp.ClientTimeout(total=10)) as response:
                     response_time = (time.time() - start_time) * 1000
                     
                     if response.status == 200:
@@ -129,7 +129,7 @@ class NewsAPIHealthChecker:
             return ServiceHealth(
                 name="NewsAPI",
                 status=HealthStatus.UNHEALTHY,
-                error_message="Timeout après 5 secondes",
+                error_message="Timeout après 10 secondes",
                 last_check=datetime.now(timezone.utc)
             )
         except Exception as e:
@@ -206,8 +206,11 @@ class HealthCheckManager:
         
         # Cache des dernières vérifications
         self._last_checks: Dict[str, ServiceHealth] = {}
-        self._check_interval = 60  # 1 minute
+        self._check_interval = 300  # 5 minutes (au lieu de 1 minute)
         self._background_task: Optional[asyncio.Task] = None
+        
+        # Historique des succès pour optimiser les health checks
+        self._last_successful_use: Dict[str, datetime] = {}
     
     async def get_full_health_report(self) -> Dict[str, Any]:
         """Retourne un rapport de santé complet"""
@@ -292,21 +295,31 @@ class HealthCheckManager:
             try:
                 await asyncio.sleep(self._check_interval)
                 
-                # Vérifications asynchrones
-                news_task = asyncio.create_task(self.news_checker.check_health())
-                model_task = asyncio.create_task(self.model_checker.check_health())
+                # Vérifications conditionnelles
+                tasks = []
                 
-                news_health, model_health = await asyncio.gather(news_task, model_task)
+                # NewsAPI : seulement si pas utilisé récemment
+                if not self._should_skip_health_check('newsapi'):
+                    tasks.append(('newsapi', self.news_checker.check_health()))
+                else:
+                    logger.debug("Health check NewsAPI ignoré - utilisé récemment avec succès")
                 
-                # Mise à jour du cache
-                self._last_checks['newsapi'] = news_health
-                self._last_checks['model'] = model_health
+                # Modèle : toujours vérifier (plus critique)
+                tasks.append(('model', self.model_checker.check_health()))
                 
-                # Log des problèmes
-                if news_health.status != HealthStatus.HEALTHY:
-                    logger.warning(f"NewsAPI health issue: {news_health.error_message}")
-                if model_health.status != HealthStatus.HEALTHY:
-                    logger.warning(f"Model health issue: {model_health.error_message}")
+                # Exécution des vérifications nécessaires
+                if tasks:
+                    results = await asyncio.gather(*[task[1] for task in tasks], return_exceptions=True)
+                    
+                    for i, (service_name, result) in enumerate(zip([task[0] for task in tasks], results)):
+                        if isinstance(result, Exception):
+                            logger.error(f"Erreur health check {service_name}: {result}")
+                        else:
+                            self._last_checks[service_name] = result
+                            
+                            # Log uniquement les vrais problèmes
+                            if result.status != HealthStatus.HEALTHY:
+                                logger.warning(f"{service_name.title()} health issue: {result.error_message}")
                 
             except asyncio.CancelledError:
                 break
@@ -316,6 +329,28 @@ class HealthCheckManager:
     def get_cached_health(self, service_name: str) -> Optional[ServiceHealth]:
         """Retourne le dernier état de santé en cache"""
         return self._last_checks.get(service_name)
+    
+    def mark_service_success(self, service_name: str):
+        """Marque qu'un service a été utilisé avec succès"""
+        self._last_successful_use[service_name] = datetime.now(timezone.utc)
+        
+        # Met à jour le cache avec un état healthy
+        if service_name == "newsapi":
+            self._last_checks[service_name] = ServiceHealth(
+                name="NewsAPI",
+                status=HealthStatus.HEALTHY,
+                last_check=datetime.now(timezone.utc),
+                metadata={'source': 'real_usage'}
+            )
+    
+    def _should_skip_health_check(self, service_name: str) -> bool:
+        """Détermine si on peut éviter un health check"""
+        last_success = self._last_successful_use.get(service_name)
+        if last_success:
+            # Si utilisé avec succès dans les 10 dernières minutes, pas besoin de health check
+            time_since_success = datetime.now(timezone.utc) - last_success
+            return time_since_success.total_seconds() < 600  # 10 minutes
+        return False
 
 
 def main():

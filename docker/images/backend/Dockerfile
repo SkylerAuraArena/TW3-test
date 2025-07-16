@@ -13,8 +13,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copier le reste de l'application depuis le dossier local vers le répertoire de travail dans le conteneur
 COPY docker/images/backend /app/
 
-# Copier des scripts Python spécifiques depuis le dossier docker backend vers le répertoire de travail du conteneur
-COPY docker/images/backend/main.py .
+# Copier les modules d'architecture depuis le dossier src/
+COPY src/ /app/
 
 # Rendre le script d'entrée 'start.sh' exécutable
 RUN chmod +x start.sh

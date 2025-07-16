@@ -62,6 +62,7 @@ except ImportError as e:
     # Fallback gracieux si les modules ne sont pas disponibles
     config = None
     news_api_circuit_breaker = None
+    retry_with_backoff = None
     cache_manager = None
 
 # Réduit la verbosité des warnings Transformers pour un log plus propre
@@ -178,12 +179,18 @@ if retry_with_backoff:
             try:
                 result = _fetch_news()
                 logger.info(f"NewsAPI appelé avec succès pour: {query[:50]}...")
+                # Marquer l'utilisation réussie pour optimiser les health checks
+                if health_manager:
+                    health_manager.mark_service_success('newsapi')
             except Exception as e:
                 logger.error(f"Circuit breaker ouvert ou erreur NewsAPI: {e}")
                 return "[ERREUR] Service d'actualités temporairement indisponible. Merci de réessayer plus tard."
         else:
             # Fallback sans circuit breaker
             result = _fetch_news_api(query, from_date, sort, max_results)
+            # Marquer le succès si pas d'erreur
+            if health_manager and not result.startswith("["):
+                health_manager.mark_service_success('newsapi')
         
         # Étape 3: Mise en cache du résultat pour éviter futurs appels
         if cache_manager and cache_manager.news_cache and not result.startswith("["):
@@ -201,6 +208,10 @@ else:
                 return cached_result
         
         result = _fetch_news_api(query, from_date, sort, max_results)
+        
+        # Marquer le succès si pas d'erreur
+        if health_manager and not result.startswith("["):
+            health_manager.mark_service_success('newsapi')
         
         if cache_manager and cache_manager.news_cache and not result.startswith("["):
             cache_manager.news_cache.set_news(query, from_date, sort, max_results, result)

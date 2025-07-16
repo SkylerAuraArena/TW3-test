@@ -8,6 +8,87 @@ TW3 est une application de chat intelligente qui combine un modèle de langage Q
 
 TW3 adopte une architecture modulaire robuste pour assurer la maintenabilité, la testabilité et la scalabilité :
 
+## Lancement simplifié en local
+
+### Démarrage automatisé avec setup.sh
+
+L'application TW3 peut être lancée en une seule commande grâce au script d'automatisation :
+
+```bash
+bash setup.sh
+```
+**Ce que fait le script :**
+- Vérifie les prérequis (Docker, Docker Compose)
+- Configure les variables d'environnement
+- Construit et lance automatiquement l'infrastructure Docker
+- Initialise deux conteneurs optimisés :
+  - `backend_container` : API FastAPI + modèle Qwen 7B
+  - `frontend_container` : Interface Next.js avec TailwindCSS
+
+**Gestion des données et logs :**
+- **Logs d'installation** : Compilés automatiquement dans `setup.log` pour traçabilité complète
+- **Conversations** : Persistées dans le volume Docker partagé `/conversations` pour conservation inter-redémarrages
+- **Cache système** : Stockage temporaire optimisé pour les actualités et réponses IA
+
+### Points d'accès de l'application
+
+| Service | URL | Description |
+|---------|-----|-------------|
+| **Frontend** | http://localhost:3000 | Interface utilisateur principale |
+| **Backend API** | http://localhost:8000 | API REST FastAPI |
+| **Documentation** | http://localhost:8000/docs | Documentation interactive Swagger |
+| **Health Check** | http://localhost:8000/health | Monitoring système en temps réel |
+| **Métriques** | http://localhost:8000/metrics | Statistiques de performance |
+
+## Architecture et choix techniques
+
+### Frontend : Reproduction fidèle de l'identité TW3 Partners
+
+**Framework choisi : Next.js 15 + TypeScript**
+- Interface reproduisant fidèlement le site officiel TW3 Partners
+- Design responsive intégrant navbar et footer d'origine
+- Zone de chat centrale modernisée et optimisée pour l'expérience utilisateur
+- TailwindCSS pour une cohérence visuelle et une maintenance simplifiée
+
+**Justification des choix :**
+- **Next.js** : Prêt pour les évolutions futures (SSR, optimisations SEO)
+- **Alternative envisagée** : Svelte/SvelteKit (préférence personnelle pour l'absence de Virtual DOM)
+- **React maintenu** : Écosystème mature et expertise équipe étendue
+
+### Backend : Intelligence artificielle locale et API d'actualités
+
+**Modèle IA : Qwen 2.5-Coder-7B-Instruct**
+- Déploiement local dans le conteneur backend pour contrôle total
+- Choix contraint par les ressources matérielles disponibles
+- Pipeline Transformers (Hugging Face) pour l'intégration production
+- Source : [Hugging Face Qwen Repository](https://huggingface.co/Qwen/Qwen2.5-Coder-7B-Instruct)
+
+**API d'actualités : NewsAPI Integration**
+- Service externe pour données journalistiques en temps réel
+- Support multi-sources et multi-langues
+- Documentation complète : [newsapi.org](https://newsapi.org/)
+
+**Contrainte identifiée et solution proposée :**
+
+🔍 **Problème actuel :** L'API NewsAPI nécessite des mots-clés précis ("IA générative", "cinéma") plutôt que des phrases complètes.
+
+🎯 **Solution recommandée :** Pipeline d'extraction intelligente de mots-clés
+```
+Prompt utilisateur → Modèle d'extraction de mots-clés → NewsAPI → Contexte enrichi → Réponse finale
+```
+Cette approche permettrait de traiter des requêtes complexes comme :
+*"Quels sont les derniers développements en IA générative annoncés cette semaine? Donne-moi 3 exemples concrets avec leurs sources."*
+
+### Architecture modulaire et patterns de production
+
+**Modules de résilience développés :**
+- `src/cache.py` : Cache intelligent multi-niveaux avec TTL
+- `src/resilience.py` : Circuit breaker, retry patterns, rate limiting
+- `src/monitoring.py` : Health checks automatisés et métriques système
+- `src/config.py` : Configuration centralisée et validation des paramètres
+
+Cette architecture assure la robustesse, la maintenabilité et la scalabilité pour un environnement de production.
+
 ### Structure des Modules
 
 ```
@@ -141,7 +222,7 @@ Statistiques détaillées pour monitoring et optimisation.
 - [OK] **Logging structuré** : Logs JSON pour Azure Monitor
 - [OK] **Production-ready** : Optimisations performance et sécurité
 
-## 📋 Table des matières
+## Table des matières
 
 1. [Installation locale](#installation-locale)
 2. [Architecture de l'application](#architecture-de-lapplication)
@@ -443,7 +524,7 @@ Endpoint `/metrics` pour monitoring externe (Prometheus, Azure Monitor) :
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                    Azure Front Door                         │
-│           (CDN + WAF + Global Load Balancer)               │
+│           (CDN + WAF + Global Load Balancer)                │
 └─────────────────────┬───────────────────────────────────────┘
                       │
 ┌─────────────────────┴───────────────────────────────────────┐
@@ -458,10 +539,10 @@ Endpoint `/metrics` pour monitoring externe (Prometheus, Azure Monitor) :
                       │
 ┌─────────────────────┴───────────────────────────────────────┐
 │              Services Externes et Monitoring                │
-│  ┌─────────────────┐ ┌──────────────┐ ┌─────────────────┐   │
-│  │   Azure Redis   │ │ Azure Monitor│ │ Application     │   │
-│  │   (Cache L2)    │ │ & Log Analytics │ │   Insights     │   │
-│  └─────────────────┘ └──────────────┘ └─────────────────┘   │
+│  ┌─────────────────┐ ┌─────────────────┐  ┌─────────────┐   │
+│  │   Azure Redis   │ │ Azure Monitor.  │  │ Application │   │
+│  │   (Cache L2)    │ │ & Log Analytics │  │   Insights  │   │
+│  └─────────────────┘ └─────────────────┘  └─────────────┘   │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -896,7 +977,7 @@ az afd profile create \
 - [OK] Private endpoints pour ACR et Storage
 - [OK] WAF configuré sur Front Door
 
-## 💰 Estimation des coûts
+## Estimation des coûts
 
 ### Coûts mensuels Azure (EUR)
 
@@ -919,7 +1000,7 @@ az afd profile create \
 - **Storage tiers** : Archivage automatique des logs anciens
 - **CDN caching** : Réduction bande passante backend
 
-## 🔄 Stratégie de mise en production
+## Stratégie de mise en production
 
 ### CI/CD Pipeline avec GitHub Actions
 
@@ -1212,5 +1293,5 @@ az backup policy create \
 ---
 
 **Version** : 1.0.0  
-**Dernière mise à jour** : 15 juillet 2025  
-**Auteur** : Équipe TW3
+**Dernière mise à jour** : 16 juillet 2025  
+**Auteur** : SkylerAuraArena
