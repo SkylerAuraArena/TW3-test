@@ -812,7 +812,7 @@ az keyvault secret set \
 | **Total estimation** | Usage modéré | **1135-2685 EUR/mois** |
 
 *Note : Coûts variables selon l'utilisation réelle et les pics de trafic*
-
+```
 ┌─────────────────────────────────────────────────────────────┐
 │  ┌─────────────────┐    ┌───────────────────────────┐       │
 │  │   (Next.js)     │    │   (FastAPI + Modules)     │       │
