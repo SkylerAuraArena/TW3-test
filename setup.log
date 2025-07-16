@@ -1,0 +1,51 @@
+═══════════════════════════════════════════════════════════════════════════════
+TW3 Setup Log - Started at 2025-07-16 11:09:23
+═══════════════════════════════════════════════════════════════════════════════
+Starting TW3 environment setup...
+All output logged to: setup.log
+Configuration:
+   Network: tw3_network
+   Volume: tw3_data_volume
+   Backend Port: 8001
+   Frontend Port: 3000
+   Images to build: 2
+[11:09:23] INFO: Checking prerequisites...
+[11:09:23] SUCCESS: All prerequisites checked successfully
+[11:09:23] INFO: Checking for Docker network 'tw3_network'...
+[11:09:23] INFO: Docker network 'tw3_network' already exists.
+[11:09:23] INFO: Checking for Docker volume 'tw3_data_volume'...
+[11:09:23] INFO: Docker volume 'tw3_data_volume' already exists.
+[11:09:23] INFO: Building Docker images if necessary...
+[11:09:23] INFO: Docker image 'tw3_backend:1.0' already exists. Skipping build.
+[11:09:23] INFO: Docker image 'tw3_frontend:1.0' already exists. Skipping build.
+[11:09:23] INFO: Starting Docker Compose...
+ Container backend_container  Created
+ Container frontend_container  Created
+Attaching to backend_container, frontend_container
+frontend_container  | 
+frontend_container  | > tw3@0.1.0 start
+frontend_container  | > next start
+frontend_container  | 
+frontend_container  |    ▲ Next.js 15.3.5
+frontend_container  |    - Local:        http://localhost:3000
+frontend_container  |    - Network:      http://172.19.0.3:3000
+frontend_container  | 
+frontend_container  |  ✓ Starting...
+frontend_container  |  ✓ Ready in 549ms
+backend_container   | Démarrage de l'application FastAPI backend...
+backend_container   | 2025-07-16 09:09:29,716 - tw3.chat - INFO - Modules d'architecture chargés avec succès
+backend_container   | 2025-07-16 09:09:29,717 - tw3.chat - INFO - Répertoire de logs créé: /app/volume/conversations
+backend_container   | 2025-07-16 09:09:29,717 - tw3.chat - INFO - Health check manager initialisé
+backend_container   | INFO:     Started server process [9]
+backend_container   | INFO:     Waiting for application startup.
+backend_container   | 2025-07-16 09:09:29,719 - tw3.chat - INFO - Initialisation de l'application TW3...
+backend_container   | 2025-07-16 09:09:29,719 - tw3.chat - INFO - Preloading Qwen pipeline for faster responses…
+backend_container   | 2025-07-16 09:09:29,719 - tw3.chat - INFO - Loading Qwen pipeline… (first call only)
+backend_container   | Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 66.88it/s]
+backend_container   | 2025-07-16 09:09:30,703 - tw3.chat - INFO - Cache manager started
+backend_container   | 2025-07-16 09:09:30,703 - tw3.chat - INFO - Health monitoring started
+backend_container   | 2025-07-16 09:09:30,703 - tw3.chat - INFO - Application TW3 initialisée avec succès
+backend_container   | INFO:     Application startup complete.
+backend_container   | INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+backend_container   | 2025-07-16 09:15:01,893 - monitoring - WARNING - Newsapi health issue: Timeout après 10 secondes
+backend_container   | 2025-07-16 09:20:33,053 - monitoring - WARNING - Newsapi health issue: Timeout après 10 secondes

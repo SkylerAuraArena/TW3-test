@@ -1,0 +1,42 @@
+# ------------------- Web framework -------------------
+fastapi                  # API principale (inclut Starlette)
+uvicorn                  # serveur ASGI de prod / dev
+python-dotenv            # chargement des variables d'environnement
+
+# ------------------- Réseau / HTTP -------------------
+httpx                    # client HTTP async utilisé dans le code
+aiohttp                  # client HTTP async pour health checks
+google-serp-api          # API pour interroger Google Search
+
+# ------------------- Validation & configuration ------ 
+pydantic                 # modèles de données
+python-dotenv            # chargement des variables d'env (.env)
+
+# ------------------- Uploads (multipart) -------------
+python-multipart         # nécessaire à FastAPI pour File / Form
+
+# ------------------- model -------------------------
+torch                    # framework de deep learning
+transformers             # bibliothèque pour les modèles de langage
+accelerate               # accélération des modèles Transformers
+
+# ------------------- Utilities ---------------------
+pathlib                 # manipulation de chemins de fichiers
+uuid                    # génération d'UUIDs
+datetime                # manipulation de dates et heures
+
+# ------------------- Testing & Development ---------
+pytest                  # framework de tests
+pytest-asyncio          # support async pour pytest
+pytest-mock             # mocking pour pytest
+
+# ------------------- Monitoring & Performance ------
+psutil                  # métriques système (CPU, mémoire, disque)
+
+# ------------------- Resilience & Cache ------------
+tenacity                # retry avec backoff exponentiel
+redis                   # cache distribué (optionnel)
+
+# ------------------- Security ----------------------
+cryptography            # chiffrement et sécurité
+python-jose             # JWT tokens
