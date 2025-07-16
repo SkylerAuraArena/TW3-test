@@ -4,6 +4,12 @@
 
 TW3 est une application de chat intelligente qui combine un modèle de langage Qwen 7B avec une API d'actualités NewsAPI pour fournir des réponses contextualisées et informées.
 
+Voici un aperçu de l’application :
+
+![Capture d’écran](Screenshot.png)
+![Capture d’écran 2](Screenshot 2.png)
+![Capture d’écran 3](Screenshot 3.png)
+
 ## Architecture Modulaire
 
 TW3 adopte une architecture modulaire robuste pour assurer la maintenabilité, la testabilité et la scalabilité :
@@ -70,9 +76,9 @@ bash setup.sh
 
 **Contrainte identifiée et solution proposée :**
 
-🔍 **Problème actuel :** L'API NewsAPI nécessite des mots-clés précis ("IA générative", "cinéma") plutôt que des phrases complètes.
+**Problème actuel :** L'API NewsAPI nécessite des mots-clés précis ("IA générative", "cinéma") plutôt que des phrases complètes.
 
-🎯 **Solution recommandée :** Pipeline d'extraction intelligente de mots-clés
+**Solution recommandée :** Pipeline d'extraction intelligente de mots-clés
 ```
 Prompt utilisateur → Modèle d'extraction de mots-clés → NewsAPI → Contexte enrichi → Réponse finale
 ```
@@ -805,6 +811,9 @@ az keyvault secret set \
 | **Total estimation** | Usage modéré | **1135-2685 EUR/mois** |
 
 *Note : Coûts variables selon l'utilisation réelle et les pics de trafic*
+
+┌─────────────────────────────────────────────────────────────┐
+│  ┌─────────────────┐    ┌───────────────────────────┐       │
 │  │   (Next.js)     │    │   (FastAPI + Modules)     │       │
 │  │   + CDN Cache   │    │   + Cache + Monitoring    │       │
 │  └─────────────────┘    └───────────────────────────┘       │
@@ -1275,7 +1284,7 @@ az backup policy create \
 - **v1.3** : Support multi-langues
 - **v2.0** : Architecture microservices + Event-driven
 
-## 📞 Support et contacts
+## Support et contacts
 
 ### Équipe technique
 
